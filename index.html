@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  Willowood Group · MH & RV Park Buy Box v1.0 — Notes
+  ============================================================================
+  Adapted from the DFW Retail Buy Box framework. Two parallel 1–10 scores —
+  ASSET (physical hard asset: utilities, market, scale, land) and OPERATIONS
+  (income durability & upside: home mix, occupancy, rent-to-market, expenses,
+  bill-back, collections) — blended 60/40. Utilities dominate because sewer/
+  water surprises are where MHP deals get "burned" (Keel Team / MHU DD guides).
+
+  A distinct STEWARDSHIP & REGULATORY overlay (grounded in the PESP Private
+  Equity Manufactured Housing Tracker + the "is MHP investing exploitative?"
+  literature) screens deals whose returns depend on the extractive rent-gouge
+  playbook — which invites rent control, good-cause eviction laws, litigation,
+  and reputational / exit impairment. It feeds the hard gates and can cap a
+  decision at CAUTION.
+
+  Hard gates (binary kills; UNKNOWN reads as risk, not average): lagoon/plant
+  sewer with no city path; unknown water/sewer; FEMA floodway; non-conforming
+  or unknown zoning; predominantly park-owned homes (>70%); master-metered,
+  park-paid, no bill-back path; sub-scale (<20 lots); unknown occupancy;
+  rent-capped jurisdiction where underwriting relies on blocked hikes; and a
+  marketed cap 50bps+ above the real day-1 cap.
+
+  Live pipeline — 5 deals parsed from user-provided Marcus & Millichap OMs; each OM embedded and viewable in the deal modal.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Willowood Group · MH &amp; RV Park Buy Box v1.0 · Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700;9..144,900&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #11100E; --ink-2: #19181520; --surface: #1F1D19; --surface-2: #29261F; --surface-3: #34302720;
+  --line: #3A352B; --line-soft: #2A2620;
+  --cream: #F4ECD8; --cream-soft: #D9CFB8; --muted: #948870; --muted-2: #6B6453;
+  --gold: #C9A961; --gold-bright: #E8C778;
+  --emerald: #7DAB7B; --jade: #95B881; --amber: #D4A356; --rust: #B86850; --crimson: #8E4640;
+  --tier1: #7DAB7B; --tier2: #95B881; --tier3: #D4A356; --tier4: #B86850; --tier5: #8E4640;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--ink); color: var(--cream); font-family: 'Manrope', sans-serif; font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body {
+  background-image: radial-gradient(ellipse at 20% 0%, #1B1813 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 100%, #1A1612 0%, transparent 50%), var(--ink);
+  min-height: 100vh;
+}
+.wrap { max-width: 1320px; margin: 0 auto; padding: 56px 36px 80px; }
+.serif { font-family: 'Fraunces', serif; font-weight: 400; letter-spacing: -0.01em; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.18em; }
+.sm { font-size: 13px; color: var(--cream-soft); }
+.muted { color: var(--muted); }
+
+/* HERO */
+.hero { padding: 28px 0 56px; border-bottom: 1px solid var(--line-soft); margin-bottom: 56px; }
+.hero-meta { display: flex; gap: 20px; align-items: center; margin-bottom: 28px; flex-wrap: wrap; }
+.hero-meta .ver-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 9px; background: rgba(201,169,97,0.12); color: var(--gold); border: 1px solid rgba(201,169,97,0.3); letter-spacing: 0.1em; }
+.hero h1 { font-family: 'Fraunces', serif; font-weight: 300; font-size: clamp(38px, 6vw, 78px); line-height: 0.97; letter-spacing: -0.025em; color: var(--cream); margin-bottom: 24px; font-variation-settings: "opsz" 144; }
+.hero h1 em { font-style: italic; color: var(--gold-bright); font-weight: 300; }
+.hero-sub { display: grid; grid-template-columns: 1.4fr 1fr; gap: 60px; margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--line-soft); }
+.hero-sub p { font-size: 16px; color: var(--cream-soft); max-width: 60ch; }
+.hero-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+.hero-stats .stat { border-left: 1px solid var(--line); padding-left: 16px; }
+.hero-stats .stat .num { font-family: 'Fraunces', serif; font-size: 32px; color: var(--cream); font-weight: 400; line-height: 1; }
+.hero-stats .stat .lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 8px; font-family: 'JetBrains Mono', monospace; }
+@media (max-width: 800px) { .hero-sub { grid-template-columns: 1fr; gap: 32px; } }
+
+.changelog-strip { background: linear-gradient(90deg, rgba(201,169,97,0.10) 0%, rgba(201,169,97,0.02) 100%); border: 1px solid rgba(201,169,97,0.3); border-left: 3px solid var(--gold); padding: 14px 20px; margin-bottom: 36px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.changelog-strip .cl-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; padding: 2px 8px; background: rgba(201,169,97,0.15); border: 1px solid rgba(201,169,97,0.3); }
+.changelog-strip .cl-text { font-size: 13px; color: var(--cream-soft); }
+.changelog-strip .cl-text strong { color: var(--cream); font-weight: 600; }
+
+.section { margin-bottom: 80px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--line-soft); flex-wrap: wrap; gap: 12px; }
+.section-head h2 { font-family: 'Fraunces', serif; font-weight: 400; font-size: 36px; color: var(--cream); letter-spacing: -0.015em; }
+.section-head h2 em { font-style: italic; color: var(--gold-bright); }
+.section-head .num-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+
+.market-pulse { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; background: var(--surface); border: 1px solid var(--line-soft); margin-bottom: 32px; }
+.market-pulse .mp { padding: 22px 20px; border-right: 1px solid var(--line-soft); }
+.market-pulse .mp:last-child { border-right: none; }
+.market-pulse .mp .lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.market-pulse .mp .val { font-family: 'Fraunces', serif; font-size: 26px; color: var(--cream); font-weight: 400; line-height: 1; }
+.market-pulse .mp .val .small { font-size: 13px; color: var(--gold); }
+.market-pulse .mp .delta { font-size: 10px; color: var(--muted); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+.market-pulse .mp .delta.pos { color: var(--emerald); }
+.market-pulse .mp .delta.neg { color: var(--rust); }
+@media (max-width: 1000px) { .market-pulse { grid-template-columns: repeat(3, 1fr); }
+  .market-pulse .mp:nth-child(3n) { border-right: none; }
+  .market-pulse .mp:nth-child(-n+3) { border-bottom: 1px solid var(--line-soft); } }
+@media (max-width: 600px) { .market-pulse { grid-template-columns: 1fr 1fr; } }
+
+/* TWO-TRACK */
+.two-track-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 900px){ .two-track-grid { grid-template-columns: 1fr; } }
+.track-pillar { background: var(--surface); border: 1px solid var(--line-soft); padding: 30px 28px; position: relative; }
+.track-pillar.A { border-top: 3px solid var(--emerald); }
+.track-pillar.B { border-top: 3px solid var(--gold); }
+.track-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.track-pillar h3 { font-family: 'Fraunces', serif; font-size: 27px; font-weight: 400; color: var(--cream); margin-bottom: 8px; }
+.track-pillar h3 em { font-style: italic; color: var(--gold-bright); }
+.track-tagline { font-size: 13.5px; color: var(--cream-soft); font-style: italic; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--line-soft); }
+.criteria-head { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin: 16px 0 8px; }
+ul.bb-criteria { list-style: none; }
+ul.bb-criteria li { font-size: 13px; color: var(--cream-soft); padding: 5px 0; display: flex; gap: 9px; }
+ul.bb-criteria li::before { content: '—'; color: var(--gold); flex-shrink: 0; }
+ul.bb-criteria li strong { color: var(--cream); font-weight: 600; }
+.pick-banner { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line-soft); }
+.pick-banner .pl { font-family:'JetBrains Mono',monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 8px; }
+.pick-banner .pn { font-size: 13px; color: var(--cream); font-weight: 500; }
+.pick-banner .ps { font-family:'JetBrains Mono',monospace; font-size: 11px; }
+
+/* SCORING */
+.scoring { display: grid; grid-template-columns: 1fr; }
+.scoring .factor { padding: 10px 0; border-bottom: 1px dashed var(--line); }
+.scoring .factor:last-child { border-bottom: none; }
+.scoring .factor .pct { font-family: 'Fraunces', serif; font-size: 30px; color: var(--gold-bright); font-weight: 400; line-height: 1; }
+.scoring .factor .pct .small { font-size: 15px; color: var(--muted); }
+.scoring .factor .name { font-size: 12px; color: var(--cream); margin-top: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.scoring .factor .desc { font-size: 11.5px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+
+/* THESIS */
+.thesis-box{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:4px;padding:22px 26px;}
+.thesis-presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.preset-btn{background:var(--surface-2);border:1px solid var(--line);color:var(--cream-soft);padding:9px 15px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;letter-spacing:0.03em;transition:all 0.12s;}
+.preset-btn:hover{border-color:var(--gold);color:var(--cream);}
+.preset-btn.active{background:var(--gold);color:var(--ink);font-weight:600;border-color:var(--gold);}
+.blend-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line-soft);}
+.blend-row .bl-lbl{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream-soft);}
+.blend-row input[type=range]{accent-color:var(--gold);}
+.thesis-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+@media(max-width:900px){.thesis-grid{grid-template-columns:1fr;}}
+.tcol h4{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;display:flex;justify-content:space-between;}
+.tcol h4 .sum{color:var(--muted);}
+.slider-row{display:grid;grid-template-columns:150px 1fr 44px;gap:10px;align-items:center;margin-bottom:9px;}
+.slider-row label{font-size:11.5px;color:var(--cream-soft);}
+.slider-row input[type=range]{width:100%;accent-color:var(--gold);height:4px;}
+.slider-row .val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cream);text-align:right;}
+.thesis-actions{display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft);align-items:center;}
+.tbtn{background:var(--surface-2);border:1px solid var(--line);color:var(--cream-soft);padding:9px 16px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;}
+.tbtn.gold{background:var(--gold);color:var(--ink);font-weight:600;border:none;}
+.thesis-note{font-size:11px;color:var(--muted);margin-left:auto;font-style:italic;}
+
+/* MAP */
+.map-cap-toggle{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+.map-cap-toggle .lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+.layer-toggle { display: inline-flex; gap: 6px; padding: 4px; background: var(--ink); border: 1px solid var(--line-soft); border-radius: 4px; }
+.layer-toggle button { padding: 8px 12px; background: transparent; border: none; color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; border-radius: 3px; transition: all 0.2s ease; }
+.layer-toggle button.active { background: var(--gold); color: var(--ink); font-weight: 600; }
+.layer-toggle button:hover:not(.active) { color: var(--cream); }
+.svgmap-wrap{position:relative;border:1px solid var(--line-soft);background:linear-gradient(160deg,#16140F,#1B1813);border-radius:4px;overflow:hidden;min-height:380px;}
+#mapHost{width:100%;min-height:380px;}
+.mk{cursor:pointer;} .mk:hover{opacity:0.82;}
+.maptip{position:absolute;pointer-events:none;background:var(--ink);border:1px solid var(--gold);border-radius:4px;padding:8px 11px;font-size:11.5px;color:var(--cream);opacity:0;transition:opacity 0.1s;z-index:50;max-width:240px;box-shadow:0 8px 24px rgba(0,0,0,0.5);}
+.maptip .mt-n{font-weight:600;} .maptip .mt-d{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border:1px solid var(--line-soft);border-radius:4px;}
+table.rank{width:100%;border-collapse:collapse;font-size:12.5px;min-width:1000px;}
+table.rank thead th{background:var(--surface);text-align:left;padding:12px 12px;font-family:'JetBrains Mono',monospace;font-size:9.5px;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap;}
+table.rank tbody td{padding:11px 12px;border-bottom:1px solid var(--line-soft);color:var(--cream-soft);vertical-align:middle;}
+tbody tr.deal-row{cursor:pointer;transition:background .12s;}
+tbody tr.deal-row:hover{background:var(--surface-3);}
+td.r-num{font-family:'JetBrains Mono',monospace;color:var(--muted);}
+td.r-addr{color:var(--cream);font-weight:600;}
+td.r-addr .sub{display:block;font-weight:400;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.tier-pill{display:inline-block;padding:3px 9px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;}
+.tier-pill.tier-1{background:rgba(125,171,123,.16);color:var(--tier1);border:1px solid rgba(125,171,123,.5);}
+.tier-pill.tier-2{background:rgba(149,184,129,.16);color:var(--tier2);border:1px solid rgba(149,184,129,.5);}
+.tier-pill.tier-3{background:rgba(212,163,86,.16);color:var(--tier3);border:1px solid rgba(212,163,86,.5);}
+.tier-pill.tier-4{background:rgba(184,104,80,.16);color:var(--tier4);border:1px solid rgba(184,104,80,.5);}
+.tier-pill.tier-5{background:rgba(142,70,64,.16);color:var(--tier5);border:1px solid rgba(142,70,64,.5);}
+
+/* PRIORITY */
+.priority-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:1000px){.priority-grid{grid-template-columns:1fr;}}
+.p-card{background:var(--surface);border:1px solid var(--line-soft);border-radius:4px;overflow:hidden;transition:border-color .2s;display:flex;flex-direction:column;}
+.p-card:hover{border-color:var(--gold);}
+.p-card.featured{border-color:rgba(201,169,97,.5);box-shadow:0 0 0 1px rgba(201,169,97,.2);}
+.p-card-header{padding:18px 20px 14px;border-bottom:1px solid var(--line-soft);position:relative;}
+.p-card .badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);}
+.p-card .rank-num{position:absolute;top:16px;right:18px;font-family:'Fraunces',serif;font-style:italic;font-size:30px;color:var(--gold);opacity:.35;}
+.p-card .name{font-family:'Fraunces',serif;font-size:19px;color:var(--cream);margin-top:6px;line-height:1.2;}
+.p-card .addr{font-size:11.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:4px;}
+.p-card .submark{font-size:11px;color:var(--cream-soft);margin-top:6px;}
+.p-card-body{padding:16px 20px 20px;flex:1;display:flex;flex-direction:column;}
+.p-card-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 14px;margin-bottom:12px;}
+.p-card-row .k{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;}
+.p-card-row .v{font-size:14px;color:var(--cream);font-weight:500;margin-top:2px;}
+.investment-thesis{font-size:12px;color:var(--cream-soft);line-height:1.6;margin-top:auto;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(8,7,6,0.82);backdrop-filter:blur(3px);z-index:1000;display:none;align-items:center;justify-content:center;padding:28px;}
+.overlay.open{display:flex;}
+.modal{background:var(--ink);border:1px solid var(--line);border-radius:6px;width:100%;max-width:900px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.6);}
+.modal-hd{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--surface);}
+.modal-hd h2{font-family:'Fraunces',serif;font-weight:400;font-size:23px;color:var(--cream);line-height:1.1;}
+.modal-hd .ma{font-size:12px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+.modal-close{background:none;border:1px solid var(--line);color:var(--cream);width:34px;height:34px;border-radius:3px;font-size:18px;cursor:pointer;flex-shrink:0;}
+.modal-close:hover{background:var(--surface-2);border-color:var(--gold);}
+.modal-body{padding:22px 24px;overflow-y:auto;}
+.mi-score{display:flex;gap:10px;margin-bottom:16px;}
+.msc{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:11px;text-align:center;}
+.msc .n{font-family:'Fraunces',serif;font-size:25px;} .msc .l{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;margin-top:3px;}
+.dec-banner{padding:11px 16px;border-radius:3px;margin-bottom:16px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-align:center;border:1px solid;}
+.mi-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px 18px;margin-bottom:18px;}
+.mi .k{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.mi .v{font-size:15px;color:var(--cream);font-weight:500;margin-top:2px;}
+.factor-sec{margin-bottom:14px;} .factor-sec h4{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:7px;}
+.frow{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--line-soft);font-size:12px;}
+.frow .fn{color:var(--cream-soft);} .frow .fv{font-family:'JetBrains Mono',monospace;color:var(--cream);}
+.fbar{display:inline-block;width:56px;height:5px;background:var(--line);border-radius:3px;margin-left:8px;vertical-align:middle;overflow:hidden;}
+.fbar i{display:block;height:100%;background:var(--gold);}
+.gate-warn{background:rgba(142,70,64,0.15);border:1px solid var(--crimson);border-radius:3px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#D49080;}
+.steward-warn{background:rgba(212,163,86,0.12);border:1px solid var(--amber);border-radius:3px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#E2C08A;}
+.anchor-note{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line-soft);}
+@media(max-width:640px){.mi-grid{grid-template-columns:1fr;}.mi-score{flex-wrap:wrap;}}
+
+/* GATES / callouts */
+.callout{background:var(--ink-2);padding:20px 24px;border-radius:2px;}
+.callout .hd{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:12px;}
+.callout ul{margin:0;padding-left:18px;font-size:13px;line-height:1.8;color:var(--cream-soft);list-style:none;}
+.callout li{margin-bottom:4px;}
+.callout li strong{color:var(--cream);}
+
+.divider-mark{display:flex;align-items:center;gap:16px;margin-bottom:26px;}
+.divider-mark .line{flex:1;height:1px;background:var(--line-soft);}
+.divider-mark .text{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);}
+
+.footnotes { padding: 36px 0 0; border-top: 1px solid var(--line-soft); margin-top: 56px; }
+.footnotes h4 { font-family: 'Fraunces', serif; font-size: 16px; color: var(--cream); margin-bottom: 14px; font-weight: 500; }
+.footnotes p, .footnotes li { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+.footnotes ul { padding-left: 18px; }
+.fn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+@media (max-width: 800px) { .fn-grid { grid-template-columns: 1fr; } }
+.footnotes a { color: var(--muted); }
+
+.brand-bar { display: flex; align-items: center; gap: 18px; padding-bottom: 26px; margin-bottom: 32px; border-bottom: 1px solid var(--line-soft); }
+.brand-logo { width: 48px; height: 48px; color: var(--cream); flex-shrink: 0; }
+.brand-text { display: flex; flex-direction: column; gap: 4px; }
+.brand-name { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 500; color: var(--cream); letter-spacing: -0.01em; line-height: 1; }
+.brand-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--gold); letter-spacing: 0.2em; text-transform: uppercase; }
+
+.om-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:2px 0 14px}
+.om-btn{font-family:'Manrope',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.02em;color:#11100E;background:var(--gold);border:none;border-radius:7px;padding:8px 14px;cursor:pointer;transition:opacity .15s}
+.om-btn:hover{opacity:.88}
+.om-btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.om-btn.active{background:var(--emerald);color:#0c0f0c}
+.om-src{font-size:11px;color:var(--muted);margin-left:auto}
+.om-frame{margin:0 0 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="brand-bar">
+    <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Willowood Group">
+      <rect x="5" y="5" width="90" height="90" fill="none" stroke="currentColor" stroke-width="7"/>
+      <line x1="50" y1="11" x2="50" y2="89" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="13" y1="22" x2="46" y2="44" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="13" y1="44" x2="46" y2="66" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="13" y1="66" x2="46" y2="88" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="87" y1="22" x2="54" y2="44" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="87" y1="44" x2="54" y2="66" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="87" y1="66" x2="54" y2="88" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+    </svg>
+    <div class="brand-text">
+      <div class="brand-name">Willowood Group</div>
+      <div class="brand-tag">Real Estate Acquisitions</div>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <span class="eyebrow">Acquisition Framework · Manufactured Housing &amp; RV · 2026</span>
+    <span class="ver-badge">v1.1 · Thesis-Calibrated · <span id="hero-count">5</span> Deals</span>
+  </div>
+  <h1>Willowood's<br><em>MH &amp; RV Park</em><br>Buy Box</h1>
+
+  <div class="changelog-strip">
+    <span class="cl-tag">Framework</span>
+    <span class="cl-text"><strong>Two parallel 1&ndash;10 scores &mdash; Asset and Operations &mdash; blended 60/40, with hard gates that kill a deal regardless of price and a recommended cap band that says what to actually pay.</strong> A distinct <strong>Stewardship &amp; Regulatory</strong> overlay screens deals whose returns depend on the extractive rent-gouge playbook &mdash; the pattern that invites rent control, good-cause eviction laws, litigation and exit impairment. The design mirrors our DFW Retail buy box, re-tooled around the way manufactured-housing deals are actually won and lost.</span>
+  </div>
+
+  <div class="hero-sub">
+    <p>Manufactured-housing communities and RV parks are the lowest cost-per-unit asset class in real estate &mdash; but they are an <strong>infrastructure business first</strong>. Sewer and water surprises, not tenant credit, are where deals get burned. This framework grades every candidate on the two levers that matter: the <strong>physical asset</strong> (utilities, market, scale, land) and the <strong>operating income</strong> (home-ownership mix, occupancy, lot-rent-to-market, expenses, bill-back). Hard gates reject lagoon/plant sewer with no city path, floodway sites, non-conforming zoning, predominantly park-owned inventory, and any deal whose only path to yield is rent hikes the law or the market won't bear. Each park earns a deterministic <strong>recommended cap band</strong> and a <strong>GO / CAUTION / NO-GO</strong> call.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="num"><span id="hero-go">&mdash;</span></div><div class="lbl">GO-Rated Parks</div></div>
+      <div class="stat"><div class="num"><span id="hero-t1">&mdash;</span> / <span id="hero-t2">&mdash;</span></div><div class="lbl">Tier 1 / Tier 2</div></div>
+      <div class="stat"><div class="num">60/40</div><div class="lbl">Asset / Operations Blend</div></div>
+      <div class="stat"><div class="num">70/30</div><div class="lbl">Target · MHC / RV Equity</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- MARKET PULSE -->
+<section class="section">
+  <div class="section-head">
+    <h2>Sector <em>Pulse</em></h2>
+    <span class="num-tag">§00 · Evidence — Public Operators &amp; 2026 Industry Data</span>
+  </div>
+  <div class="market-pulse">
+    <div class="mp"><div class="lbl">Sun Same-Property MH Occ.</div><div class="val">97.7<span class="small">%</span></div><div class="delta pos">1Q26 · 5-yr avg 97.6%</div></div>
+    <div class="mp"><div class="lbl">Annual MH Move-Outs</div><div class="val">0.3<span class="small">%</span></div><div class="delta pos">residents are anchored</div></div>
+    <div class="mp"><div class="lbl">MH 10-Yr NOI Growth</div><div class="val">6.4<span class="small">%</span></div><div class="delta pos">Sun same-property avg</div></div>
+    <div class="mp"><div class="lbl">MH 10-Yr Site-Rent Growth</div><div class="val">4.4<span class="small">%</span></div><div class="delta pos">durable land rent</div></div>
+    <div class="mp"><div class="lbl">2026 RV Transient Bookings</div><div class="val">&minus;2.2<span class="small">%</span></div><div class="delta neg">Campspot YoY · underwrite soft</div></div>
+    <div class="mp"><div class="lbl">2026 RV Shipments (RVIA)</div><div class="val">&minus;8.2<span class="small">%</span></div><div class="delta neg">314k midpoint vs 2025</div></div>
+  </div>
+  <p class="sm" style="max-width: 88ch; margin-top: 16px;">The governing thesis (Chandler, Jul 2026) builds the platform on <strong>manufactured-housing communities as the defensive core</strong> and <strong>hybrid RV parks as a selective return sleeve &mdash; a 70% MHC / 30% RV equity allocation.</strong> The MHC case is structural: Sun Communities reported 97.7% same-property MH occupancy, only 0.3% annual physical move-outs, and 6.4% average 10-year same-property NOI growth; PGIM and IPA attribute the durability to constrained new supply (5.2% national vacancy) and residents who can't cheaply move a home. The RV case is real but <strong>cyclical in 2026</strong> &mdash; RVIA cut shipments 8.2%, Campspot shows transient bookings down 2.2%, and ELS reported annual RV revenue up 4.1% while transient fell 8.5% &mdash; so the mandate is to buy <strong>hybrid parks with a monthly/annual recurring floor</strong>, not commodity transient parks priced on peak season. Texas adds a structural edge: it <strong>preempts municipal rent control</strong>. The buy box below is calibrated to this thesis &mdash; scale bands, DSCR floors, home-mix, wastewater verification and demand diversification are all scored against it.</p>
+</section>
+
+<!-- TWO-TRACK BUY BOX -->
+<section class="section">
+  <div class="section-head">
+    <h2>The <em>Two-Track</em> Buy Box</h2>
+    <span class="num-tag">§01 · Parallel Acquisition Frameworks</span>
+  </div>
+  <p class="sm" style="max-width: 80ch; margin-bottom: 24px;">Two fundamentally different assets share this platform. <strong>Track A &mdash; Manufactured Housing Communities</strong> trades on land-lease durability: residents own their homes, turnover is near-zero because a move costs $5,000&ndash;$10,000, and value is created through utilities, infill, and gradual rent-to-market. <strong>Track B &mdash; RV Parks &amp; Resorts</strong> trades on hospitality dynamics: nightly/monthly mix, seasonality, amenities, and destination pull. A deal only needs to win one track.</p>
+
+  <div class="two-track-grid">
+    <div class="track-pillar A">
+      <div class="track-label">Track A · The Land-Lease Strategy</div>
+      <h3>Manufactured <em>Housing</em> Communities</h3>
+      <p class="track-tagline">"Own the dirt, lease the pad, let the resident own the home."</p>
+
+      <h4 class="criteria-head">Physical Asset</h4>
+      <ul class="bb-criteria">
+        <li><strong>City water &amp; city sewer</strong> — the gold standard; septic manageable, lagoon/package plants avoided absent a city-hookup path.</li>
+        <li><strong>50+ lots</strong> for financeability &amp; on-site management economics; sub-25 is a structural kill.</li>
+        <li><strong>Individual or sub-metered</strong> utilities so water/sewer bills back to residents ($30&ndash;$60/lot recovered).</li>
+        <li><strong>Public roads, no floodway, conforming zoning</strong>; Sch-40 PVC / clay / cast-iron lines, not galvanized/polybutylene.</li>
+      </ul>
+
+      <h4 class="criteria-head">Operating Income</h4>
+      <ul class="bb-criteria">
+        <li><strong>Primarily tenant-owned homes</strong> (POH &lt; 40%); park-owned inventory adds capex &amp; liability ($40k&ndash;$80k/home to replace).</li>
+        <li><strong>Lot rent 10&ndash;30% below market</strong> — the value-add lever, closed <em>gradually</em> and sustainably.</li>
+        <li><strong>85&ndash;95% occupancy, trend flat-to-rising</strong>; expense ratio 35&ndash;45%.</li>
+        <li><strong>Within ~1 hr of a 100k+ metro</strong> with stable-to-growing employment.</li>
+      </ul>
+      <div class="pick-banner" id="trackA-picks"></div>
+    </div>
+
+    <div class="track-pillar B">
+      <div class="track-label">Track B · The Hospitality Strategy</div>
+      <h3>RV <em>Parks</em> &amp; Resorts</h3>
+      <p class="track-tagline">"Where destination pull, amenities and seasonality drive the pad."</p>
+
+      <h4 class="criteria-head">Physical &amp; Location</h4>
+      <ul class="bb-criteria">
+        <li><strong>Destination or path-of-travel</strong> — tourism draw, lake/hill-country, or long-stay near employment/energy corridors.</li>
+        <li><strong>Full hookups (W/S/E), pull-throughs</strong>; city utilities strongly preferred, amenities that support ADR.</li>
+        <li><strong>No floodway, conforming zoning</strong>, room to add sites or annual/seasonal cabins.</li>
+      </ul>
+
+      <h4 class="criteria-head">Income Mix</h4>
+      <ul class="bb-criteria">
+        <li><strong>Annual/monthly base + transient upside</strong> — annual leases smooth the seasonal curve.</li>
+        <li><strong>Watch seasonality &amp; concentration</strong>; underwrite off-season, not peak.</li>
+        <li><strong>Amenity &amp; ADR upside</strong> as the value-creation lever rather than pure rate hikes.</li>
+        <li><strong>Occupancy read as economic, not just physical</strong>; verify against deposits.</li>
+      </ul>
+      <div class="pick-banner" id="trackB-picks"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCORING FRAMEWORK -->
+<section class="section">
+  <div class="section-head">
+    <h2>Scoring <em>Framework</em></h2>
+    <span class="num-tag">§02 · Asset + Operations, Blended 60 / 40 · Stewardship Overlay</span>
+  </div>
+  <p class="sm" style="max-width: 82ch; margin-bottom: 20px;"><strong>Every park carries two 1&ndash;10 scores.</strong> We weight <strong>Asset 60%</strong> on purpose: in manufactured housing a strong rent roll can't rescue a failing sewer system, so utilities, market and scale do the heavy lifting. Move the weights in the Thesis panel and every score, decision and map marker re-sorts live. <strong>Blended tiers:</strong> Premier &ge;8.5 · Institutional 7.0&ndash;8.4 · Value-Add 5.5&ndash;6.9 · Turnaround 4.0&ndash;5.4 · Pass &lt;4.0. The <strong>hard gates</strong> below kill a deal regardless of how it scores.</p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px;">
+    <div style="background: var(--surface); border: 1px solid var(--line); padding: 20px; border-radius: 2px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--emerald); text-transform: uppercase; margin-bottom: 8px;">Asset Score · 60% Weight</div>
+      <div style="font-family: 'Fraunces', serif; font-size: 20px; color: var(--cream); margin-bottom: 16px;">Utilities · Market · Scale · Land</div>
+      <div class="scoring">
+        <div class="factor"><div class="pct">28<span class="small">%</span></div><div class="name">Water Source</div><div class="desc">10 = city water. 5 = private well (good). 2 = well poor/unknown ($50k&ndash;$150k+ upgrade risk).</div></div>
+        <div class="factor"><div class="pct">28<span class="small">%</span></div><div class="name">Sewer System</div><div class="desc">10 = city sewer. 6 = septic (good). 4 = package plant. 2 = lagoon / unknown (EPA/DEQ liability).</div></div>
+        <div class="factor"><div class="pct">14<span class="small">%</span></div><div class="name">Infrastructure Condition</div><div class="desc">Pipe material + roads + age. 10 = Sch-40 PVC, paved public roads. 2 = galvanized/poly, gravel/private.</div></div>
+        <div class="factor"><div class="pct">14<span class="small">%</span></div><div class="name">Market Strength</div><div class="desc">10 = &lt;1hr from 100k+ metro, growing jobs. 5 = tertiary, stable. 2 = declining, population loss.</div></div>
+        <div class="factor"><div class="pct">8<span class="small">%</span></div><div class="name">Scale &amp; Financeability</div><div class="desc">10 = 150+ pads. 6 = 50+. 4 = 25&ndash;50. &lt;20 = hard gate.</div></div>
+        <div class="factor"><div class="pct">8<span class="small">%</span></div><div class="name">Land &amp; Infill Upside</div><div class="desc">Developable vacant pads, clean flood/zoning, expansion room. 1 = built-out, floodway/non-conforming.</div></div>
+      </div>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--line); padding: 20px; border-radius: 2px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px;">Operations Score · 40% Weight</div>
+      <div style="font-family: 'Fraunces', serif; font-size: 20px; color: var(--cream); margin-bottom: 16px;">Home Mix · Occupancy · Rent · Expense</div>
+      <div class="scoring">
+        <div class="factor"><div class="pct">26<span class="small">%</span></div><div class="name">Home-Ownership Mix</div><div class="desc">10 = &le;10% park-owned. 6 = &le;40%. 2 = &le;70%. &gt;70% POH = hard gate (a housing business, not a land lease).</div></div>
+        <div class="factor"><div class="pct">22<span class="small">%</span></div><div class="name">Occupancy &amp; Trend</div><div class="desc">10 = 95%+ rising. 5 = ~80%. Falling trend penalized; &lt;70% or unknown = risk.</div></div>
+        <div class="factor"><div class="pct">20<span class="small">%</span></div><div class="name">Lot-Rent vs Market</div><div class="desc">Sustainable upside. 10 = 30%+ below market. 4 = at market. 3 = above market (no room).</div></div>
+        <div class="factor"><div class="pct">14<span class="small">%</span></div><div class="name">Expense Ratio</div><div class="desc">10 = &le;35%. 6 = &le;45%. 2 = &gt;50% (POH-heavy or utility drag).</div></div>
+        <div class="factor"><div class="pct">10<span class="small">%</span></div><div class="name">Utility Bill-Back</div><div class="desc">10 = RUBS/sub-metered in place. 7 = addable. 2 = master-metered, park-paid, no path.</div></div>
+        <div class="factor"><div class="pct">8<span class="small">%</span></div><div class="name">Collections Quality</div><div class="desc">Economic vs physical occupancy — rent actually collected &amp; verified to deposits.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left: 3px solid var(--rust); margin-bottom: 8px;">
+    <div class="hd" style="color: var(--rust);">Hard Gates · A Deal Fails These Regardless of Score</div>
+    <ul>
+      <li>&#8709; <strong>Lagoon or package-plant sewer with no path to city</strong> — the single biggest capex/regulatory liability in the asset class</li>
+      <li>&#8709; <strong>Water source or sewer type unknown</strong> — missing infrastructure data reads as risk, not average</li>
+      <li>&#8709; <strong>FEMA floodway</strong>, or <strong>non-conforming / unknown zoning</strong> (forced-closure risk)</li>
+      <li>&#8709; <strong>Predominantly park-owned homes (&gt;70%)</strong> — management &amp; capex intensity of a housing operator, not a land-lease</li>
+      <li>&#8709; <strong>Master-metered, park-paid utilities with no sub-meter path</strong> — margin exposed to every rate increase</li>
+      <li>&#8709; <strong>Sub-scale (&lt;20 pads)</strong> — fails financeability &amp; on-site management economics</li>
+      <li>&#8709; <strong>Rent-capped jurisdiction where the underwriting relies on hikes the law blocks</strong> — the extraction thesis is legally foreclosed</li>
+    </ul>
+  </div>
+
+  <div class="callout" style="border-left: 3px solid var(--amber);">
+    <div class="hd" style="color: var(--amber);">Stewardship &amp; Regulatory Overlay · Why We Screen the Extraction Playbook</div>
+    <div style="font-size: 13px; line-height: 1.65; color: var(--cream-soft);">The private-equity model documented across the sector &mdash; buy, spike lot rents 40&ndash;60% (or double them), sell in ~4 years &mdash; works precisely <em>because</em> residents can't move a home for $5k&ndash;$10k. That "hostage" dependence is also the source of the risk: it has drawn rent-control and good-cause-eviction laws, class-action settlements over utilities and maintenance, Fannie/Freddie tenant-protection mandates, and national press that impairs exits. Our overlay flags any deal whose return <strong>depends</strong> on shock rent increases in a protected or protection-trending market, and rewards durable, sub-market-to-market business plans a responsible operator can defend. Lower regulatory beta is not just ethics &mdash; it is a cleaner, more financeable, more exit-ready asset.</div>
+  </div>
+</section>
+
+<!-- GOVERNING THESIS -->
+<section class="section">
+  <div class="section-head">
+    <h2>Governing <em>Thesis</em></h2>
+    <span class="num-tag">§02.5 · Chandler MHC/RV Texas Thesis &mdash; Jul 2026</span>
+  </div>
+  <div class="callout" style="border-left:3px solid var(--gold);margin-bottom:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;">
+    <div style="flex:1;min-width:320px;">
+      <div class="hd" style="color:var(--gold);">Mandate &middot; 70% MHC (defensive core) / 30% hybrid RV (return sleeve)</div>
+      <div style="font-size:13px;line-height:1.65;color:var(--cream-soft);">Acquire under-managed 75&ndash;300 pad MHCs and 80&ndash;250 site hybrid RV parks in Texas secondary/tertiary markets with existing cash flow and <strong>&ge;2 identifiable NOI levers</strong>. Underwrite to a base case that needs <strong>no aggressive rent hikes, no peak-season transient demand, and no quick refinance</strong>. Reject unresolved wastewater, floodway, electrical-capacity, title, zoning, or insurance problems regardless of headline cap rate.</div>
+    </div>
+    <button class="om-btn" style="align-self:center;" onclick="openOM('thesis')">&#9636; View Full Investment Thesis (PDF)</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:20px;">
+    <div style="background:var(--surface);border:1px solid var(--line);padding:20px;border-radius:2px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">Target Acquisition Profile</div>
+      <table class="tp-tbl" style="width:100%;border-collapse:collapse;font-size:12.5px;">
+        <tr style="color:var(--muted);text-align:left;"><th style="padding:4px 6px;font-weight:500;">Criterion</th><th style="padding:4px 6px;font-weight:500;color:var(--emerald);">MHC Core</th><th style="padding:4px 6px;font-weight:500;color:var(--gold);">Hybrid RV</th></tr>
+        <tr><td>Size</td><td>75&ndash;300 pads</td><td>80&ndash;250 sites</td></tr>
+        <tr><td>Trailing occupancy</td><td>70&ndash;95%</td><td>60%+ w/ upside</td></tr>
+        <tr><td>Home / revenue mix</td><td>&ge;75% resident-owned</td><td>40&ndash;60% monthly floor</td></tr>
+        <tr><td>Utilities</td><td>Municipal / submeterable</td><td>30/50A, verified sewer</td></tr>
+        <tr><td>Base-case DSCR</td><td>&ge;1.35x</td><td>&ge;1.40x</td></tr>
+        <tr><td>Return target</td><td>15%+ IRR / 8%+ CoC</td><td>18%+ IRR / 10%+ CoC</td></tr>
+        <tr><td>Exit-cap cushion</td><td>+50&ndash;100 bps</td><td>+125 bps</td></tr>
+      </table>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;">Deals are scored against these bands; misses on scale, occupancy, home-mix or DSCR surface as <em>Thesis Fit</em> flags in each deal card.</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="background:var(--surface);border:1px solid var(--line);padding:20px;border-radius:2px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;">Live Pipeline Allocation vs 70/30 Target</div>
+        <div id="allocTrack"></div>
+      </div>
+      <div class="callout" style="border-left:3px solid var(--rust);margin:0;">
+        <div class="hd" style="color:var(--rust);">Reject / Price-Reset Red Flags</div>
+        <ul style="font-size:12px;">
+          <li>Legal site count can't be reconciled to rent roll &amp; utility map</li>
+          <li>Private wastewater capacity/compliance unverifiable before end of DD</li>
+          <li>Floodway or repeat losses without an engineering + insurance fix</li>
+          <li>Plan depends on immediate double-digit rent increases</li>
+          <li>RV demand rests on one employer / event / season / channel</li>
+          <li>Insurance can't be bound at the underwritten premium</li>
+          <li>Requires refi or sale within 2 years to clear</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="border-left:3px solid var(--amber);margin-top:20px;">
+    <div class="hd" style="color:var(--amber);">Texas Market Filters &amp; 2026 Cyclical Posture</div>
+    <div style="font-size:12.5px;line-height:1.65;color:var(--cream-soft);"><strong>RGV / South Texas:</strong> workforce, cross-border, Winter Texan demand &mdash; require flood, drainage &amp; heat discipline. <strong>San Antonio / I-35 outer ring:</strong> employment corridors, don't overpay for growth narratives. <strong>DFW secondary/tertiary:</strong> favor industrial, logistics, military, medical over destination-dependent RV. <strong>Gulf Coast / Hill Country:</strong> RV only with documented elevation, flood history, evacuation &amp; insurable BI. <strong>Industrial nodes:</strong> extended-stay demand can be strong but underwrite employer concentration &amp; project end-dates. &nbsp;Because 2026 transient RV demand is softening, RV underwriting leans on the recurring monthly/annual floor, not peak season.</div>
+  </div>
+</section>
+
+<!-- THESIS -->
+<section class="section">
+  <div class="section-head">
+    <h2>Live Thesis <em>Controls</em></h2>
+    <span class="num-tag">§02.6 · Pick a preset or tune the weights &mdash; everything recomputes live</span>
+  </div>
+  <div class="thesis-box">
+    <div class="thesis-presets" id="presets"></div>
+    <div class="blend-row">
+      <span class="bl-lbl">Asset <strong id="blAS">60</strong>%</span>
+      <input type="range" id="blendSlider" min="0" max="100" value="60" oninput="onBlend(this.value)">
+      <span class="bl-lbl"><strong id="blOP">40</strong>% Operations</span>
+    </div>
+    <div class="thesis-grid">
+      <div class="tcol"><h4>Asset Factors <span class="sum" id="asSum">100%</span></h4><div id="asSliders"></div></div>
+      <div class="tcol"><h4>Operations Factors <span class="sum" id="opSum">100%</span></h4><div id="opSliders"></div></div>
+    </div>
+    <div class="thesis-actions">
+      <button class="tbtn gold" onclick="resetThesis()">Reset to Thesis Default</button>
+      <span class="thesis-note">Weights auto-normalize to 100% within each group.</span>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="section">
+  <div class="section-head">
+    <h2>Pipeline <em>Map</em></h2>
+    <span class="num-tag">§03 · Click any marker to open the park &amp; its scorecard</span>
+  </div>
+  <div class="map-cap-toggle">
+    <span class="lbl">Color markers by</span>
+    <div class="layer-toggle">
+      <button id="mc-dec" class="active" onclick="setMapColor('decision',this)">Decision</button>
+      <button id="mc-tier" onclick="setMapColor('tier',this)">Tier</button>
+      <button id="mc-bl" onclick="setMapColor('blended',this)">Blended</button>
+    </div>
+    <span id="mapLegend" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-left:12px;"></span>
+  </div>
+  <div class="svgmap-wrap">
+    <div id="mapHost"></div>
+    <div class="maptip" id="maptip"></div>
+  </div>
+  <p class="sm muted" style="margin-top:10px;">Texas-anchored pipeline; out-of-state deals appear in the ranking table but off this state map.</p>
+</section>
+
+<!-- PRIORITY -->
+<section class="section">
+  <div class="divider-mark"><span class="line"></span><span class="text">&darr; Priority Recommendation &darr;</span><span class="line"></span></div>
+  <div class="section-head">
+    <h2>The First <em>Acquisitions</em></h2>
+    <span class="num-tag">§04 · Live Top Picks · Highest-Ranked GO Deals</span>
+  </div>
+  <div style="background: rgba(201,169,97,0.06); border: 1px solid rgba(201,169,97,0.35); border-left: 3px solid var(--gold-bright); padding: 20px 26px; margin-bottom: 26px; border-radius: 2px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--gold-bright);text-transform:uppercase;margin-bottom:10px;">Live Recommendation · Recomputes With Your Thesis</div>
+    <p style="font-size:13px;line-height:1.65;color:var(--cream-soft);margin:0;">The picks below are generated from the current thesis &mdash; the top-ranked parks that pass every hard gate and earn a GO decision. Change the weights above and this slate updates. Click any card for the full scorecard.</p>
+  </div>
+  <div class="priority-grid" id="priority-cards"></div>
+</section>
+
+<!-- RANKING TABLE -->
+<section class="section">
+  <div class="section-head">
+    <h2>Full <em>Ranking</em></h2>
+    <span class="num-tag">§05 · All <span id="rank-count">13</span> parks · gated deals sink to the bottom</span>
+  </div>
+  <div class="table-wrap">
+    <table class="rank">
+      <thead><tr>
+        <th>#</th><th>Park</th><th>Decision</th><th>Tier</th>
+        <th style="text-align:right">Asset</th><th style="text-align:right">Ops</th><th style="text-align:right">Blend</th>
+        <th style="text-align:right">Price</th><th style="text-align:right">Ask Cap</th><th style="text-align:right">Rec Band</th>
+        <th style="text-align:right">Fair Value</th><th style="text-align:right">Var</th>
+        <th style="text-align:right">Pads</th><th style="text-align:right">POH</th><th style="text-align:center">Steward</th><th style="text-align:center">Gates</th>
+      </tr></thead>
+      <tbody id="rankBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PLAN OF ATTACK -->
+<section class="section">
+  <div class="divider-mark"><span class="line"></span><span class="text">&darr; Plan of Attack &darr;</span><span class="line"></span></div>
+  <div class="section-head">
+    <h2>Decision <em>Logic</em></h2>
+    <span class="num-tag">§06 · GO / CAUTION / NO-GO · Recommended Cap Band · Fair Value</span>
+  </div>
+  <div style="background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--emerald); padding: 20px 24px; border-radius: 2px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--emerald);text-transform:uppercase;margin-bottom:12px;">Watch List · Tier 2 + Tier 3 Value-Add</div>
+    <div id="watch-list" style="font-size:13px;line-height:1.7;color:var(--cream-soft);"></div>
+  </div>
+  <div style="background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--rust); padding: 20px 24px; border-radius: 2px; margin-top: 16px;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--rust);text-transform:uppercase;margin-bottom:12px;">Pass / Gated List</div>
+    <div id="pass-list" style="font-size:13px;line-height:1.7;color:var(--muted);"></div>
+  </div>
+</section>
+
+<!-- FOOTNOTES -->
+<div class="footnotes">
+  <div class="fn-grid">
+    <div>
+      <h4>Methodology</h4>
+      <p>Two 1&ndash;10 scores (Asset, Operations) blended 60/40 into a composite that drives tier and a clamped recommended cap band (5.75%&ndash;8.75%). Fair value = disclosed NOI &divide; recommended cap where NOI is given, else price &times; asking cap. Structural gates are binary and independent of price; unknown critical inputs read as risk. A Stewardship &amp; Regulatory overlay can gate an extraction-dependent deal in a rent-capped market and otherwise cap a decision at CAUTION.</p>
+      <p style="margin-top:10px;"><strong>Thesis-calibrated.</strong> Scale bands (MHC 75&ndash;300 / RV 80&ndash;250), the 60%/40% occupancy floors, &ge;75% resident-owned preference, DSCR floors (1.35x MHC / 1.40x RV), wastewater verification, and demand diversification are all scored against the Chandler Texas MHC/RV thesis (Jul 2026). Each deal card carries a non-gating <em>Thesis Fit</em> read; the live allocation tracker measures the pipeline against the 70/30 mandate.</p>
+      <p style="margin-top:10px;"><strong>Live pipeline — your OMs.</strong> The five deals shown are parsed from the Offering Memoranda you provided (Marcus &amp; Millichap). Click any deal, then <em>View Full OM</em>, to open the source document. Figures are transcribed from those OMs; assumed inputs (rent gaps, undisclosed expense ratios) are flagged in each deal's notes and must be confirmed against the actual rent roll and T12 in diligence.</p>
+    </div>
+    <div>
+      <h4>Sources</h4>
+      <ul>
+        <li><strong>Governing document:</strong> <em>Texas-Focused MHC &amp; RV Park Investment Thesis</em> (prepared for Ken Chandler, Jul 15 2026) &mdash; mandate, target profiles, underwriting framework, risk matrix, 100-day plan. <a href="#" onclick="openOM('thesis');return false;" style="color:var(--gold)">View PDF</a>.</li>
+        <li>Thesis evidence base: Sun Communities (Jun 2026 investor presentation), Equity LifeStyle 2025 10-K, UMH Properties 2025 AR, PGIM Real Estate (Mar 2026), IPA/Marcus &amp; Millichap MHC reports, KOA 2026, RVIA Summer 2026 RoadSigns, Campspot 2026 mid-year, Texas MHA shipments.</li>
+        <li>PESP &amp; MHAction, <em>Private Equity Manufactured Housing Tracker</em> (updated Jan 2026) — extraction playbook, rent-hike cases, Fannie/Freddie tenant protections, regulatory landscape.</li>
+        <li>Covercy, <em>Is Mobile Home Park Investing Exploitative?</em> — stewardship framing.</li>
+        <li>Reonomy, <em>How to Invest in Mobile Home Parks (2026)</em> — cost-per-unit economics, low-turnover thesis, DD checklist.</li>
+        <li>Keel Team / Mobile Home University DD guides — utilities as the primary risk, POH vs TOH, occupancy &amp; expense benchmarks, lot-rent-to-market value-add.</li>
+        <li>Homes Direct, <em>Pros &amp; Cons of Modular Homes</em> — home-type / infill considerations.</li>
+      </ul>
+      <p style="margin-top:10px;">Not investment advice. Verify every input in diligence — physically count occupied pads, inspect all utility systems, order a Phase I, and confirm zoning conformance with the jurisdiction.</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeMO()">
+  <div class="modal">
+    <div class="modal-hd"><div><h2 id="mTitle"></h2><div class="ma" id="mAddr"></div></div>
+      <button class="modal-close" onclick="closeMO()">&times;</button></div>
+    <div class="modal-body" id="mBody"></div>
+  </div>
+</div>
+
+
+<script>
+/* ---------- utils ---------- */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+const EL={};
+function el(id){let e=EL[id];if(e&&e.isConnected)return e;e=EL[id]=document.getElementById(id);return e;}
+function fmtMoney(v){if(v==null)return '\u2014';if(Math.abs(v)>=1e6)return '$'+(v/1e6).toFixed(2)+'M';return '$'+(v/1e3).toFixed(0)+'K';}
+let _raf=0;function scheduleRender(){if(_raf)return;_raf=requestAnimationFrame(function(){_raf=0;render();});}
+document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-open]');if(t){var id=+t.getAttribute('data-open');if(!Number.isNaN(id))openDetail(id);}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMO();});
+
+/* ---------- data (live pipeline — parsed from user-provided OMs) ---------- */
+const PROPERTIES=[
+ {name:"South Texas MHC Portfolio",city:"McAllen / San Juan",state:"TX",archetype:"mhc",om:"southtx",dscr:null,demand:["Workforce","Cross-border","Retiree / Winter Texan"],rv_recurring:"MHC land-lease core + 25 RV pads",lat:26.2034,lng:-98.2300,pads:159,rv:0,occ:93,occ_trend:"flat",water:"city",sewer:"city",meter:"submetered",pipe:"unknown",roads:"unknown",flood:"none",zoning:"conforming",poh_pct:10,lot_rent:450,market_rent:500,expense_ratio:null,billback:"in_place",collections:8,sale_price:7900000,cap_rate:8.07,noi:637167,metro:"McAllen (Rio Grande Valley)",metro_min:15,agency:true,rent_control:"none",notes:"Two-asset RGV manufactured-housing portfolio \u2014 Baldwin Mobile Home Manor (McAllen) + Palm City Mobile Estates (San Juan), under 4 mi apart. 159 spaces / 167 rentable units, 122 tenant-owned homes. City water & sewer at BOTH parks, sub-metered and billed back; MH occupancy 100% (Baldwin) and 97% (Palm City). Lot rents $415\u2013$465 look below-market for a rising RGV; the ~10% gap modeled here is ASSUMED pending the rent roll. 25 RV pads run 35\u201350% \u2014 the lease-up piece. Broker: Marcus & Millichap.",levers:"Below-market lot rents (verify vs. RGV comps) + scale efficiencies + RV lease-up"},
+ {name:"Water Tower RV Park",city:"West Orange",state:"TX",archetype:"rv",om:"watertower",dscr:1.41,demand:["Golden Triangle petrochemical workforce"],rv_recurring:"Monthly long-term (workforce) — strong recurring floor",lat:30.0846,lng:-93.7649,pads:0,rv:42,occ:93,occ_trend:"flat",water:"city",sewer:"city",meter:"submetered",pipe:"unknown",roads:"private",flood:"none",zoning:"conforming",poh_pct:0,lot_rent:0,market_rent:0,expense_ratio:52,billback:"addable",collections:8,sale_price:1950000,cap_rate:9.18,noi:179068,metro:"Beaumont / Golden Triangle",metro_min:20,agency:false,rent_control:"none",notes:"42-space, 2023-built RV park on full city water & sewer (Orange County WCID), all-concrete roads & pads, 93% occupancy since opening. The ONLY RV park permitted in West Orange (Ordinance 358-A) \u2014 a hard cap on new supply \u2014 and the closest park to the multi-billion-dollar Golden Triangle Polymers plant and 'chemical row', anchoring long-run workforce-housing demand. Opportunity Zone. Expense ratio ~52% derived from T12 gross of ~$375K (verify). Broker: Marcus & Millichap.",levers:"Supply moat (sole city permit) + industrial workforce demand; tighten the ~52% expense load"},
+ {name:"Copper Ridge RV Park",city:"Hearne",state:"TX",archetype:"rv",om:"copper",dscr:1.47,demand:["College Station / Texas A&M","Regional workforce"],rv_recurring:"Monthly-primary hybrid (weekly/daily upside)",lat:30.8724,lng:-96.5928,pads:0,rv:49,occ:81,occ_trend:"flat",water:"city",sewer:"septic",meter:"submetered",pipe:"unknown",roads:"private",flood:"none",zoning:"conforming",poh_pct:0,lot_rent:0,market_rent:0,expense_ratio:null,billback:"in_place",collections:7,sale_price:1400000,cap_rate:8.90,noi:124574,metro:"Bryan/College Station",metro_min:15,agency:false,rent_control:"none",notes:"49-space RV park (2021) on city water (City of Hearne) + two 2,000-gal septic systems, all-concrete roads & pads, ~81% occupancy, electric billed back. Value-add: up to 11 additional pads on adjacent land already supported by the existing septic. Optional 7,640 SF warehouse on the same parcel for +$1.05M (or the park parcels out on 6.3 ac). Septic \u2014 not city sewer \u2014 is the item to inspect. Broker: Marcus & Millichap.",levers:"Occupancy lift + 11-pad septic-supported infill; verify septic condition/capacity"},
+ {name:"Sugar Hill RV Resort",city:"Anna",state:"TX",archetype:"rv",om:"sugarhill",dscr:null,demand:["North DFW exurb growth","Leisure / destination","Workforce"],rv_recurring:"Hybrid — monthly $899–$1,100 + transient",unpriced:true,gross:794066,lat:33.3487,lng:-96.5486,pads:0,rv:78,occ:null,occ_trend:"",water:"city",sewer:"septic",meter:"submetered",pipe:"unknown",roads:"private",flood:"none",zoning:"conforming",poh_pct:0,lot_rent:0,market_rent:0,expense_ratio:null,billback:"addable",collections:8,sale_price:null,cap_rate:null,noi:null,metro:"North DFW (McKinney/Frisco)",metro_min:20,agency:false,rent_control:"none",notes:"Class-A, 2021-built 78-site RV resort on 23.04 ac in Anna \u2014 a top-5 U.S. growth market ringed by four more. 4.8\u2605 over 200 reviews; best-in-class amenities (3,000 SF clubhouse, heated pool, hot tub, sauna, fitness, two dog parks, 13 ac of trails). Public water (Mustang SUD) + private 5,000-gpd septic; electric billed back. Room for ~130 additional sites with utility upgrades. Offered CALL-FOR-OFFERS \u2014 no price or NOI disclosed; 4-yr average gross income $794,066. Fair value cannot be run until financials arrive. Broker: Marcus & Millichap.",levers:"Premier growth-market resort \u2014 request T12 P&L, occupancy history & pricing guidance, then underwrite the 130-pad expansion"},
+ {name:"Village RV Park",city:"Nacogdoches",state:"TX",archetype:"rv",om:"village",dscr:2.39,demand:["Stephen F. Austin University","Retail / local employment"],rv_recurring:"Monthly — but 54% occupied (lease-up)",lat:31.6035,lng:-94.6555,pads:0,rv:39,occ:54,occ_trend:"flat",water:"city",sewer:"septic",meter:"master",pipe:"unknown",roads:"unknown",flood:"none",zoning:"conforming",poh_pct:0,lot_rent:0,market_rent:0,expense_ratio:null,billback:"none",collections:6,sale_price:900000,cap_rate:8.36,noi:75233,metro:"Nacogdoches (SFA University)",metro_min:10,agency:false,rent_control:"none",notes:"39 sites (31 RV + 8 MH) on 24.31 ac with 17+ acres of expansion land, under 6 mi from Stephen F. Austin University & Walmart. 1980s vintage running ~54% occupancy \u2014 a lease-up / value-add play, not a stabilized coupon. Water via Appleby Water Supply Corp, on-site septic; ALL utilities currently bundled into rent (no bill-back). Seller financing offered (~16% cash-on-cash). Broker: Marcus & Millichap.",levers:"Lease-up from 54% + activate utility bill-back + 17-acre expansion optionality"},
+ {name:"RGV 3-Asset MH/RV Portfolio",city:"Alamo / La Feria / Weslaco",state:"TX",archetype:"mhc",om:"texasportfolio",dscr:null,demand:["Winter Texan / retiree (55+)","RGV workforce","Cross-border"],rv_recurring:"55+ Winter Texan seasonal RV (annual/long-stay) \u2014 but Yr2\u20133 upside leans on aggressive RV growth",unpriced:true,gross:3411869,noi:1234990,lat:26.16,lng:-97.98,pads:374,rv:751,occ:87,occ_trend:"rising",water:"city",sewer:"city",meter:"submetered",pipe:"unknown",roads:"private",flood:"none",zoning:"conforming",poh_pct:3,lot_rent:485,market_rent:550,expense_ratio:64,billback:"in_place",collections:8,sale_price:null,cap_rate:null,metro:"McAllen\u2013Edinburg / RGV",metro_min:15,agency:true,rent_control:"none",thesisFlags:["Aggressive RV revenue-growth assumptions carry the Yr2\u20133 upside \u2014 Kenwood models RV growth 20% / 70% / 80% and Snow to Sun 20% / 50% / 50%; the thesis rejects plans that lean on immediate double-digit RV increases. Stress-test back to in-place before ascribing that value.","Kenwood (280 sites) is a negative-NOI turnaround \u2014 TTM \u2212$83.5K, Yr1 \u2212$78.7K, expense ratio 121% \u2192 116%; its Yr3 $344.7K NOI is contingent on RV lease-up + possible all-age conversion. Underwrite as value-add, not stabilized.","67% of sites are RV by count (751 of 1,125) despite the MH framing \u2014 income is MH-anchored but the site base is RV-heavy and more cyclical; weight RV occupancy/ADR volatility.","Reconcile the rent roll \u2014 8 park-owned homes, 48 vacant spaces, community-owned RVs across 3 assets; confirm the 12/11/25 rent roll ties to the unit mix and to the $96K TOH 21st Mortgage buyback liability."],notes:"Sunstone-brokered 55+ MH/RV portfolio \u2014 Casa Del Valle (Alamo, 369 sites, NOI $592K, Texas RV Assn Park of the Year), Kenwood (La Feria, 280 sites, value-add), Snow to Sun (Weslaco, 476 sites, NOI $722K), all within ~20 mi across the Rio Grande Valley. Strong bones: city water AND city sewer at all three, no flood zone, conforming zoning, and a ~97% resident-owned MH base (only 8 park-owned homes). Portfolio avg MH lot rent $485, occ 87%, moderate mark-to-market (8\u201317%). NO ASKING PRICE stated (Kenwood \u2018valued on a price per space\u2019) \u2014 treated as call-for-offers. Stated NOI $1,234,990 on $3,411,869 gross \u2014 a conservative 7.5\u20138.5% cap implies ~$14.5\u201316.5M; the 64% blended expense ratio is inflated by Kenwood\u2019s turnaround (the two stabilized assets run ~45\u201351%). Broker: Sunstone Real Estate Advisors.",levers:"Below-market lot rents (8\u201317% MTM) + Kenwood lease-up / all-age conversion + 48-pad infill \u2014 but discount the aggressive RV-growth assumptions"},
+];
+PROPERTIES.forEach(function(p,i){p._id=i;});
+
+/* ---------- thesis / weights ---------- */
+const AS_FACTORS=[["water","Water Source"],["sewer","Sewer System"],["infra","Infrastructure"],["market","Market Strength"],["scale","Scale"],["land","Land / Infill"]];
+const OP_FACTORS=[["homemix","Home-Ownership Mix"],["occ","Occupancy & Trend"],["rentgap","Lot-Rent vs Market"],["expense","Expense Ratio"],["billback","Utility Bill-Back"],["collections","Collections"]];
+const DEFAULT_THESIS={blendAS:60,as:{water:28,sewer:28,infra:14,market:14,scale:8,land:8},op:{homemix:26,occ:22,rentgap:20,expense:14,billback:10,collections:8}};
+let THESIS=JSON.parse(JSON.stringify(DEFAULT_THESIS));
+const PRESETS={
+ "Thesis Default":{blendAS:60,as:{water:28,sewer:28,infra:14,market:14,scale:8,land:8},op:{homemix:26,occ:22,rentgap:20,expense:14,billback:10,collections:8}},
+ "MHC Defensive Core":{blendAS:60,as:{water:28,sewer:28,infra:14,market:14,scale:8,land:8},op:{homemix:30,occ:24,rentgap:12,expense:14,billback:10,collections:10}},
+ "RV Upside Sleeve":{blendAS:50,as:{water:24,sewer:24,infra:12,market:24,scale:10,land:6},op:{homemix:14,occ:26,rentgap:14,expense:16,billback:14,collections:16}},
+ "Infrastructure-First":{blendAS:72,as:{water:30,sewer:30,infra:20,market:10,scale:5,land:5},op:{homemix:24,occ:20,rentgap:16,expense:18,billback:14,collections:8}},
+ "Cash-Flow / Value-Add":{blendAS:52,as:{water:24,sewer:24,infra:12,market:16,scale:12,land:12},op:{homemix:20,occ:20,rentgap:30,expense:14,billback:10,collections:6}},
+ "Downside / Risk-First":{blendAS:68,as:{water:30,sewer:30,infra:16,market:12,scale:6,land:6},op:{homemix:24,occ:22,rentgap:8,expense:20,billback:14,collections:12}}
+};
+
+/* ---------- sub-scores ---------- */
+function subScores(p){
+  var water = p.water==='city'?10 : p.water==='mixed'?7 : p.water==='well'?5 : 2;
+  var sewer = p.sewer==='city'?10 : p.sewer==='septic'?6 : p.sewer==='package_plant'?4 : 2; // lagoon/unknown=2
+  // infrastructure: pipe + roads
+  var pipe = (p.pipe==='pvc'||p.pipe==='cast_iron')?10 : p.pipe==='clay'?8 : p.pipe==='copper'?7 : (p.pipe==='galvanized'||p.pipe==='poly')?3 : 5;
+  var road = p.roads==='public'?10 : p.roads==='private'?5 : p.roads==='gravel'?4 : 5;
+  var infra = Math.round((pipe*0.6+road*0.4));
+  var mm = p.metro_min==null?60:p.metro_min;
+  var market = mm<=30?10 : mm<=45?8 : mm<=60?6 : mm<=90?4 : 2;
+  if(p.city==='Del Rio'||p.metro==='Del Rio (border)') market=Math.min(market,3); // declining market override
+  var pads = (p.pads||0)+(p.rv||0);
+  var scale; // thesis size bands: MHC 75–300 pads, RV 80–250 sites
+  if(p.archetype==='rv'){ scale = pads>250?8 : pads>=120?10 : pads>=80?9 : pads>=60?6 : pads>=40?4 : pads>=25?3 : 2; }
+  else { scale = pads>300?8 : pads>=120?10 : pads>=75?9 : pads>=50?6 : pads>=25?4 : 2; }
+  var flood = p.flood==='none'?10 : p.flood==='partial'?5 : 1;
+  var zone = p.zoning==='conforming'?10 : p.zoning==='grandfathered'?6 : 1;
+  var infillBonus = (p.occ!=null && p.occ<90)?7:5; // some vacant pads => infill upside
+  var land = Math.round(Math.min(10,(flood*0.4+zone*0.4+infillBonus*0.2)));
+  // operations
+  var poh = p.poh_pct==null?50:p.poh_pct;
+  var homemix = poh<=10?10 : poh<=25?8 : poh<=40?6 : poh<=55?4 : poh<=70?2 : 1;
+  var occ = p.occ==null?4 : p.occ>=95?10 : p.occ>=90?8 : p.occ>=85?7 : p.occ>=80?5 : p.occ>=70?3 : 2;
+  if(p.occ_trend==='rising') occ=Math.min(10,occ+1); else if(p.occ_trend==='falling') occ=Math.max(1,occ-1.5);
+  var rentgap;
+  if(p.archetype==='rv'){ rentgap = 6; } // ADR-driven; neutral
+  else { var g = (p.market_rent&&p.lot_rent)?((p.market_rent-p.lot_rent)/p.market_rent*100):0;
+         rentgap = g>=30?10 : g>=20?8 : g>=10?6 : g>=3?4 : 3; }
+  var er = p.expense_ratio==null?48:p.expense_ratio;
+  var expense = er<=35?10 : er<=40?8 : er<=45?6 : er<=50?4 : 2;
+  var billback = p.billback==='in_place'?10 : p.billback==='addable'?7 : 2;
+  var collections = p.collections==null?5:p.collections;
+  return {water:water,sewer:sewer,infra:infra,market:market,scale:scale,land:land,
+          homemix:homemix,occ:occ,rentgap:rentgap,expense:expense,billback:billback,collections:collections};
+}
+function normWeights(w){var sum=0;for(var k in w)sum+=w[k];sum=sum||1;var o={};for(var k2 in w)o[k2]=w[k2]/sum;return o;}
+
+/* ---------- stewardship overlay ---------- */
+function stewardEval(p){
+  var g=(p.archetype==='rv')?0:((p.market_rent&&p.lot_rent)?((p.market_rent-p.lot_rent)/p.market_rent*100):0);
+  var rc=p.rent_control||'none';
+  var risk='Low', gate=false, note='';
+  if(rc==='active'){
+    if(g>=25){ risk='High'; gate=true; note='Rent-capped jurisdiction; underwriting relies on rent hikes the law blocks.'; }
+    else { risk=g>=12?'High':'Moderate'; note='Active rent stabilization — limited headroom to close any rent gap.'; }
+  } else if(rc==='emerging'){
+    risk=g>=25?'Moderate':'Low'; if(g>=25) note='Protection-trending market with a large rent gap — extraction beta.';
+  } else {
+    risk='Low';
+  }
+  if(rc==='none' && p.state==='TX') note = note || 'Texas preempts municipal rent control — low regulatory beta.';
+  return {risk:risk,gate:gate,note:note,rentgap:g};
+}
+
+
+/* ---------- thesis-fit overlay (Chandler MHC/RV thesis, Jul 2026) ---------- */
+function thesisFit(p){
+  var tot=(p.pads||0)+(p.rv||0), flags=[], miss=0;
+  if(p.archetype==='rv'){
+    if(tot<80){flags.push("Below RV target scale (80\u2013250 sites) \u2014 sub professional-staffing threshold");miss++;}
+    else if(tot>250)flags.push("Above 250-site RV band");
+    if(p.occ!=null && p.occ<60){flags.push("Below 60% RV trailing-occupancy floor \u2014 lease-up / demand risk");miss++;}
+    if(p.dscr!=null && p.dscr<1.40)flags.push("DSCR "+p.dscr.toFixed(2)+"x under 1.40x RV floor (broker going-in, not downside)");
+  } else {
+    if(tot<75){flags.push("Below MHC target scale (75\u2013300 pads)");miss++;}
+    else if(tot>300)flags.push("Above 300-pad band \u2014 narrows buyer universe");
+    if(p.poh_pct!=null && p.poh_pct>25)flags.push("Park-owned "+p.poh_pct+"% exceeds preferred \u226425% (home-capex drift)");
+    if(p.dscr!=null && p.dscr<1.35)flags.push("DSCR "+p.dscr.toFixed(2)+"x under 1.35x MHC floor (broker going-in)");
+    var g=(p.market_rent&&p.lot_rent)?((p.market_rent-p.lot_rent)/p.market_rent*100):0;
+    if(g>=25)flags.push("Rent gap "+g.toFixed(0)+"% \u2014 thesis: normalize via annual increases, not abrupt resets");
+  }
+  if(p.sewer==='septic'||p.sewer==='package_plant'||p.sewer==='lagoon'){
+    var lbl={septic:'septic',package_plant:'package plant',lagoon:'lagoon'}[p.sewer];
+    flags.push("Private wastewater ("+lbl+") \u2014 verify capacity & compliance before end of DD (thesis reject-if-unverifiable)");
+  }
+  if(p.demand && p.demand.length===1)flags.push("Single primary demand driver \u2014 thesis wants \u22653; verify diversification");
+  if(Array.isArray(p.thesisFlags)&&p.thesisFlags.length)flags=flags.concat(p.thesisFlags);
+  var fit = miss>=1 ? "Below Profile" : (flags.length ? "Fits \u00b7 Diligence Flags" : "Core Fit");
+  var fcol = miss>=1 ? "#C97D4A" : (flags.length ? "#D4A356" : "#7DAB7B");
+  return {fit:fit, col:fcol, flags:flags, size:tot};
+}
+
+/* ---------- composite score & decision ---------- */
+function computeScore(p,W){
+  var s=subScores(p);
+  var asN=(W&&W.as)||normWeights(THESIS.as), opN=(W&&W.op)||normWeights(THESIS.op);
+  var as=0; AS_FACTORS.forEach(function(f){as+=s[f[0]]*asN[f[0]];});
+  var op=0; OP_FACTORS.forEach(function(f){op+=s[f[0]]*opN[f[0]];});
+  var bAS=THESIS.blendAS/100; var bl=as*bAS+op*(1-bAS);
+  var capMid=Math.min(8.75,Math.max(5.75,10.8-bl*0.5));
+  var capLow=capMid-0.25, capHigh=capMid+0.25;
+  var askCap=(p.cap_rate!=null)?p.cap_rate:null;
+  var capDay1=(p.day1_cap!=null)?p.day1_cap:askCap;
+  var st=stewardEval(p);
+
+  var gates=[];
+  var pads=(p.pads||0)+(p.rv||0);
+  if(p.water==null||p.water==='unknown')gates.push("Water source unknown");
+  if(p.sewer==null||p.sewer==='unknown')gates.push("Sewer type unknown");
+  else if(p.sewer==='lagoon'&&!p.city_sewer_path)gates.push("Lagoon sewer, no city path");
+  else if(p.sewer==='package_plant'&&!p.city_sewer_path)gates.push("Package-plant sewer, no city path");
+  if(p.flood==='restricted'||p.flood==='floodway')gates.push("FEMA floodway");
+  if(p.zoning==null||p.zoning==='unknown')gates.push("Zoning status unknown");
+  else if(p.zoning==='nonconforming')gates.push("Non-conforming zoning");
+  if(p.poh_pct!=null&&p.poh_pct>70)gates.push("Predominantly park-owned (>70%)");
+  if(p.meter==='master'&&p.billback==='none'&&p.archetype!=='rv')gates.push("Master-metered, no bill-back path");
+  if(pads<20)gates.push("Sub-scale (<20 pads)");
+  if(p.occ==null&&!p.unpriced)gates.push("Occupancy unknown");
+  if(st.gate)gates.push("Rent-capped; upside legally blocked");
+  if(askCap!=null&&capDay1!=null&&(askCap-capDay1)>=0.50)gates.push("Marketed cap 50bps+ above day-1");
+
+  var dec,dcol;
+  if(gates.length){dec="NO-GO";dcol="#8E4640";}
+  else if(capDay1==null){dec="CAUTION";dcol="#D4A356";}
+  else if(capDay1>=capMid+0.25){dec="GO";dcol="#7DAB7B";}
+  else if(capDay1>=capLow){dec="GO (At Range)";dcol="#95B881";}
+  else if(capDay1>=capLow-0.25){dec="CAUTION";dcol="#D4A356";}
+  else {dec="PASS (Overpriced)";dcol="#B86850";}
+  // stewardship can cap a GO at CAUTION
+  if(!gates.length && st.risk==='High' && dec.indexOf('GO')===0){dec="CAUTION (Extraction Risk)";dcol="#D4A356";}
+  if(!gates.length && p.unpriced){dec="REQUEST FINANCIALS";dcol="#6E8CA0";}
+
+  var tier;
+  if(bl>=8.5)tier="Tier 1 — Premier";else if(bl>=7.0)tier="Tier 2 — Institutional";
+  else if(bl>=5.5)tier="Tier 3 — Value-Add";else if(bl>=4.0)tier="Tier 4 — Turnaround";else tier="Tier 5 — Pass";
+
+  var noi=(p.noi!=null)?p.noi:((p.sale_price&&askCap!=null)?p.sale_price*(askCap/100):null);
+  var fvMid=noi?noi/(capMid/100):null;
+  var variance=(fvMid&&p.sale_price)?(p.sale_price-fvMid)/fvMid*100:null;
+  return {as:Math.round(as*10)/10,op:Math.round(op*10)/10,bl:Math.round(bl*10)/10,
+          capLow:capLow,capMid:capMid,capHigh:capHigh,capDay1:capDay1,askCap:askCap,
+          gates:gates,dec:dec,dcol:dcol,tier:tier,noi:noi,fvMid:fvMid,variance:variance,sub:s,steward:st,thesis:thesisFit(p)};
+}
+function tierClass(t){var n=t.match(/Tier (\d)/);return n?'tier-'+n[1]:'';}
+function tierShort(t){return t.split('\u2014')[1]?t.split('\u2014')[1].trim():t;}
+
+/* ---------- rank ---------- */
+let mapColor='decision';
+function scoreAndRank(){
+  var W={as:normWeights(THESIS.as),op:normWeights(THESIS.op)};
+  PROPERTIES.forEach(function(p){p._s=computeScore(p,W);});
+  var tn=function(t){return parseInt((t.match(/Tier (\d)/)||[])[1]||9);};
+  PROPERTIES.sort(function(a,b){
+    var ga=a._s.gates.length?1:0,gb=b._s.gates.length?1:0; if(ga!==gb)return ga-gb;
+    var ta=tn(a._s.tier),tb=tn(b._s.tier); if(ta!==tb)return ta-tb;
+    if(b._s.bl!==a._s.bl)return b._s.bl-a._s.bl;
+    if((b.sale_price||0)!==(a.sale_price||0))return (b.sale_price||0)-(a.sale_price||0);
+    return a._id-b._id;
+  });
+  PROPERTIES.forEach(function(p,i){p.rank=i+1;});
+}
+
+/* ---------- hero ---------- */
+function renderHero(){
+  var go=PROPERTIES.filter(function(p){return p._s.gates.length===0 && p._s.dec.indexOf('GO')===0;}).length;
+  var t1=PROPERTIES.filter(function(p){return p._s.tier.indexOf('Tier 1')===0;}).length;
+  var t2=PROPERTIES.filter(function(p){return p._s.tier.indexOf('Tier 2')===0;}).length;
+  var set=function(id,v){var e=el(id);if(e)e.textContent=v;};
+  set('hero-count',PROPERTIES.length);set('rank-count',PROPERTIES.length);
+  set('hero-go',go);set('hero-t1',t1);set('hero-t2',t2);
+}
+
+/* ---------- table ---------- */
+function fmtCap(v){return v!=null?v.toFixed(2)+'%':'\u2014';}
+function stewPill(r){var c=r==='High'?'#B86850':r==='Moderate'?'#D4A356':'#7DAB7B';return '<span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:'+c+'">'+r+'</span>';}
+function renderTable(){
+  var tb=el('rankBody'); if(!tb)return;
+  tb.innerHTML=PROPERTIES.map(function(p){
+    var s=p._s; var v=s.variance; var vs=v!=null?((v>=0?'+':'')+v.toFixed(1)+'%'):'\u2014';
+    var vc=v!=null&&v<=0?'#7DAB7B':(v!=null&&v>8?'#B86850':'var(--cream-soft)');
+    var gates=s.gates.length; var gc=gates?'#B86850':'#7DAB7B';
+    return '<tr class="deal-row" data-open="'+p._id+'">'
+      +'<td class="r-num">'+String(p.rank).padStart(2,'0')+'</td>'
+      +'<td class="r-addr">'+esc(p.name)+'<span class="sub">'+esc(p.city)+', '+esc(p.state)+' \u00b7 '+esc(p.metro)+' \u00b7 '+(p.archetype==='rv'?'RV':'MHC')+'</span></td>'
+      +'<td><span style="display:inline-block;padding:3px 8px;font-family:\'JetBrains Mono\',monospace;font-size:10px;font-weight:600;background:'+s.dcol+'22;color:'+s.dcol+';border:1px solid '+s.dcol+'88;border-radius:2px;">'+s.dec+'</span></td>'
+      +'<td><span class="tier-pill '+tierClass(s.tier)+'">'+tierShort(s.tier)+'</span></td>'
+      +'<td style="text-align:right">'+s.as.toFixed(1)+'</td>'
+      +'<td style="text-align:right">'+s.op.toFixed(1)+'</td>'
+      +'<td style="text-align:right;font-weight:600;color:var(--cream)">'+s.bl.toFixed(1)+'</td>'
+      +'<td style="text-align:right">'+fmtMoney(p.sale_price)+'</td>'
+      +'<td style="text-align:right">'+fmtCap(p.cap_rate)+(p.day1_cap!=null?' <span style="color:var(--muted)">('+p.day1_cap.toFixed(2)+' d1)</span>':'')+'</td>'
+      +'<td style="text-align:right;color:var(--gold)">'+s.capLow.toFixed(2)+'\u2013'+s.capHigh.toFixed(2)+'%</td>'
+      +'<td style="text-align:right">'+(s.fvMid?fmtMoney(s.fvMid):'\u2014')+'</td>'
+      +'<td style="text-align:right;color:'+vc+'">'+vs+'</td>'
+      +'<td style="text-align:right">'+((p.pads||0)+(p.rv||0))+(p.archetype==='rv'?' rv':'')+'</td>'
+      +'<td style="text-align:right">'+(p.archetype==='rv'?'\u2014':(p.poh_pct+'%'))+'</td>'
+      +'<td style="text-align:center">'+stewPill(s.steward.risk)+'</td>'
+      +'<td style="text-align:center;color:'+gc+';font-family:\'JetBrains Mono\',monospace;font-size:11px;">'+(gates?'\u2298 '+gates:'\u2713')+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+/* ---------- priority cards ---------- */
+function renderPriority(){
+  var cont=el('priority-cards'); if(!cont)return;
+  var go=PROPERTIES.filter(function(p){return p._s.gates.length===0 && p._s.dec.indexOf('GO')===0;});
+  var top=go.slice().sort(function(x,y){return y._s.bl-x._s.bl;}).slice(0,3);
+  var badges=["Top Pick \u00b7 Highest Blended","Runner-Up \u00b7 Quality Buy","Third \u00b7 Quality Buy"];
+  cont.innerHTML=top.map(function(p,i){var s=p._s;
+    var capTxt=(s.capDay1!=null?s.capDay1.toFixed(2)+'%':'\u2014');
+    var gap=p.archetype==='rv'?'RV resort':((p.market_rent-p.lot_rent)/p.market_rent*100).toFixed(0)+'% under market';
+    var thesis='Blended '+s.bl.toFixed(1)+'/10 (Asset '+s.as.toFixed(1)+' \u00b7 Ops '+s.op.toFixed(1)+'). '+capTxt+' ask vs recommended '+s.capMid.toFixed(2)+'%. '+esc(p.levers||'');
+    return '<div class="p-card'+(i===0?' featured':'')+'" data-open="'+p._id+'" style="cursor:pointer">'
+      +'<div class="p-card-header"><span class="badge">'+badges[i]+'</span><div class="rank-num">'+String(p.rank).padStart(2,'0')+'</div>'
+      +'<div class="name">'+esc(p.name)+'</div>'
+      +'<div class="addr">'+esc(p.city)+', '+esc(p.state)+' \u00b7 '+((p.pads||0)+(p.rv||0))+(p.archetype==='rv'?' RV sites':' pads')+'</div>'
+      +'<div class="submark">'+esc(p.metro)+' \u00b7 '+tierShort(s.tier)+' \u00b7 <span style="color:'+s.dcol+'">'+s.dec+'</span></div></div>'
+      +'<div class="p-card-body"><div class="p-card-row">'
+      +'<div><div class="k">Price</div><div class="v">'+fmtMoney(p.sale_price)+'</div></div>'
+      +'<div><div class="k">Cap (Ask/Rec)</div><div class="v">'+(p.cap_rate!=null?p.cap_rate.toFixed(2):'\u2014')+' / '+s.capMid.toFixed(2)+'%</div></div>'
+      +'<div><div class="k">Fair Value</div><div class="v">'+(s.fvMid?fmtMoney(s.fvMid):'\u2014')+'</div></div>'
+      +'<div><div class="k">Utilities</div><div class="v">'+utilLabel(p)+'</div></div>'
+      +'<div><div class="k">Home Mix</div><div class="v">'+(p.archetype==='rv'?'RV':(100-p.poh_pct)+'% TOH')+'</div></div>'
+      +'<div><div class="k">Upside</div><div class="v" style="font-size:12px">'+gap+'</div></div>'
+      +'</div><p class="investment-thesis">'+thesis+'</p></div></div>';
+  }).join('') || '<p style="color:var(--muted)">No parks currently earn a GO under this thesis \u2014 loosen the weights or check the ranking table.</p>';
+}
+function utilLabel(p){var w=p.water==='city'?'City':p.water==='well'?'Well':'Mix';var s=p.sewer==='city'?'City':p.sewer==='septic'?'Septic':p.sewer==='package_plant'?'Plant':p.sewer==='lagoon'?'Lagoon':'?';return w+'/'+s;}
+
+/* ---------- track picks ---------- */
+function renderTrackPicks(){
+  var A=PROPERTIES.filter(function(p){return p.archetype!=='rv';}).sort(function(x,y){return y._s.bl-x._s.bl;}).slice(0,2);
+  var B=PROPERTIES.filter(function(p){return p.archetype==='rv';}).sort(function(x,y){return y._s.bl-x._s.bl;}).slice(0,1);
+  var ca=el('trackA-picks');
+  if(ca)ca.innerHTML='<div class="pl">Track A Top Picks (live)</div>'+A.map(function(p){return '<div class="pn" data-open="'+p._id+'" style="cursor:pointer">'+esc(p.name)+' \u00b7 '+esc(p.city)+' (#'+p.rank+' \u00b7 Blend '+p._s.bl.toFixed(1)+' \u00b7 '+fmtMoney(p.sale_price)+' \u00b7 '+(p.cap_rate!=null?p.cap_rate.toFixed(2)+'%':'\u2014')+')</div><div class="ps" style="margin-bottom:6px;color:'+p._s.dcol+'">'+p._s.dec+' \u00b7 '+tierShort(p._s.tier)+'</div>';}).join('');
+  var cb=el('trackB-picks');
+  if(cb)cb.innerHTML='<div class="pl">Track B Top Pick (live)</div>'+B.map(function(p){return '<div class="pn" data-open="'+p._id+'" style="cursor:pointer">'+esc(p.name)+' \u00b7 '+esc(p.city)+' (#'+p.rank+' \u00b7 Blend '+p._s.bl.toFixed(1)+' \u00b7 '+fmtMoney(p.sale_price)+')</div><div class="ps" style="color:'+p._s.dcol+'">'+p._s.dec+' \u00b7 '+tierShort(p._s.tier)+'</div>';}).join('');
+}
+
+/* ---------- plan lists ---------- */
+function renderPlan(){
+  var watch=PROPERTIES.filter(function(p){return p._s.gates.length===0 && (p._s.tier.indexOf('Tier 2')===0||p._s.tier.indexOf('Tier 3')===0);});
+  var wl=el('watch-list');
+  if(wl)wl.innerHTML=watch.length?watch.map(function(p){return '<div data-open="'+p._id+'" style="cursor:pointer;padding:3px 0"><strong style="color:var(--cream)">'+esc(p.name)+'</strong> \u2014 '+esc(p.city)+', '+esc(p.state)+' \u00b7 '+tierShort(p._s.tier)+' \u00b7 <span style="color:'+p._s.dcol+'">'+p._s.dec+'</span> \u00b7 '+esc(p.levers||'')+'</div>';}).join(''):'<span style="color:var(--muted)">None under the current thesis.</span>';
+  var pass=PROPERTIES.filter(function(p){return p._s.gates.length>0 || p._s.dec.indexOf('PASS')===0;});
+  var pl=el('pass-list');
+  if(pl)pl.innerHTML=pass.length?pass.map(function(p){var reason=p._s.gates.length?p._s.gates.join('; '):'Priced above fair value';return '<div data-open="'+p._id+'" style="cursor:pointer;padding:3px 0"><strong style="color:var(--cream-soft)">'+esc(p.name)+'</strong> \u2014 '+esc(p.city)+', '+esc(p.state)+' \u00b7 <span style="color:#B86850">'+esc(reason)+'</span></div>';}).join(''):'<span style="color:var(--muted)">None \u2014 every deal clears the gates.</span>';
+}
+
+/* ---------- map (schematic Texas SVG) ---------- */
+function setMapColor(m,btn){mapColor=m;document.querySelectorAll('.map-cap-toggle .layer-toggle button').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');renderMap();}
+function blColor(bl){return bl>=7.5?"#7DAB7B":bl>=6.5?"#95B881":bl>=5.5?"#D4A356":bl>=4.5?"#C97D4A":"#8E4640";}
+function mkColor(p){var s=p._s;if(mapColor==='decision')return s.dcol;if(mapColor==='tier'){var t=(s.tier.match(/Tier (\d)/)||[])[1];return {"1":"#7DAB7B","2":"#95B881","3":"#D4A356","4":"#B86850","5":"#8E4640"}[t];}return blColor(s.bl);}
+var TX={lng0:-106.65,lng1:-93.51,lat0:25.84,lat1:36.50,W:1000,H:720,PAD:60};
+function txX(lng){return TX.PAD+(lng-TX.lng0)/(TX.lng1-TX.lng0)*(TX.W-2*TX.PAD);}
+function txY(lat){return TX.PAD+(TX.lat1-lat)/(TX.lat1-TX.lat0)*(TX.H-2*TX.PAD);}
+var TX_CITIES=[["Dallas",32.78,-96.80,1],["Fort Worth",32.75,-97.33,1],["Houston",29.76,-95.37,1],["San Antonio",29.42,-98.49,1],["Austin",30.27,-97.74,1],["El Paso",31.76,-106.49,0],["Amarillo",35.22,-101.83,0],["Lubbock",33.58,-101.86,0],["Corpus Christi",27.80,-97.40,0],["Waco",31.55,-97.15,0],["Tyler",32.35,-95.30,0],["Del Rio",29.36,-100.90,0]];
+function buildTxMap(){
+  var g='';
+  // grid
+  for(var i=1;i<8;i++){var gx=TX.PAD+i*(TX.W-2*TX.PAD)/8;g+='<line x1="'+gx.toFixed(1)+'" y1="'+TX.PAD+'" x2="'+gx.toFixed(1)+'" y2="'+(TX.H-TX.PAD)+'" stroke="#241f17" stroke-width="0.6"/>';}
+  for(var j=1;j<6;j++){var gy=TX.PAD+j*(TX.H-2*TX.PAD)/6;g+='<line x1="'+TX.PAD+'" y1="'+gy.toFixed(1)+'" x2="'+(TX.W-TX.PAD)+'" y2="'+gy.toFixed(1)+'" stroke="#241f17" stroke-width="0.6"/>';}
+  // reference cities
+  TX_CITIES.forEach(function(c){var x=txX(c[2]),y=txY(c[1]);g+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(c[3]?4:2.5)+'" fill="'+(c[3]?'#7C745E':'#4A4536')+'"/><text x="'+(x+6).toFixed(1)+'" y="'+(y+3.5).toFixed(1)+'" font-family="JetBrains Mono,monospace" font-size="'+(c[3]?11:10)+'" fill="'+(c[3]?'#9a8c66':'#6b6453')+'">'+c[0]+'</text>';});
+  // park pins
+  PROPERTIES.forEach(function(p){ if(p.lat==null||p.lng==null)return;
+    var x=txX(p.lng),y=txY(p.lat);
+    if(x<TX.PAD-8||x>TX.W-TX.PAD+8||y<TX.PAD-8||y>TX.H-TX.PAD+8)return; // off-map (e.g. Oregon)
+    var r=Math.max(10,Math.min(18,Math.sqrt((p.sale_price||3e6)/90000)));
+    g+='<g class="mk" data-open="'+p._id+'" onmousemove="mapTip(evt,'+p._id+')" onmouseleave="hideTip()">'
+      +'<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+(r+2).toFixed(1)+'" fill="#11100E" fill-opacity="0.35"/>'
+      +'<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="'+r.toFixed(1)+'" fill="'+mkColor(p)+'" fill-opacity="0.92" stroke="'+(p.archetype==='rv'?'#E8C778':'#11100E')+'" stroke-width="'+(p.archetype==='rv'?2:1.5)+'"/>'
+      +'<text x="'+x.toFixed(1)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" font-weight="600" fill="#11100E" style="pointer-events:none">'+p.rank+'</text></g>';
+  });
+  g+='<rect x="'+(TX.PAD-10)+'" y="'+(TX.PAD-10)+'" width="'+(TX.W-2*TX.PAD+20)+'" height="'+(TX.H-2*TX.PAD+20)+'" fill="none" stroke="#3A352B" stroke-width="1"/>';
+  g+='<text x="'+(TX.PAD-2)+'" y="'+(TX.PAD-18)+'" font-family="JetBrains Mono,monospace" font-size="11" fill="#948870" letter-spacing="1.5">TEXAS PIPELINE \u00b7 '+PROPERTIES.filter(function(p){return p.state==='TX';}).length+' PARKS \u00b7 gold ring = RV</text>';
+  return '<svg viewBox="0 0 '+TX.W+' '+TX.H+'" preserveAspectRatio="xMidYMid meet" style="display:block;width:100%;height:auto;aspect-ratio:'+TX.W+' / '+TX.H+';min-height:380px;background:radial-gradient(ellipse at 50% 40%,#1B1813,#15130E)">'+g+'</svg>';
+}
+function renderMapLegend(){
+  var leg=mapColor==='decision'?[["GO","#7DAB7B"],["Caution","#D4A356"],["Pass","#B86850"],["No-Go","#8E4640"]]:mapColor==='tier'?[["T1","#7DAB7B"],["T2","#95B881"],["T3","#D4A356"],["T4","#B86850"],["T5","#8E4640"]]:[["7.5+","#7DAB7B"],["6.5+","#95B881"],["5.5+","#D4A356"],["<5.5","#8E4640"]];
+  var ml=el('mapLegend');
+  if(ml)ml.innerHTML=leg.map(function(x){return '<span style="display:flex;gap:5px;align-items:center;font-size:10.5px;color:var(--cream-soft)"><span style="width:10px;height:10px;border-radius:50%;background:'+x[1]+'"></span>'+x[0]+'</span>';}).join('')+'<span style="font-size:10px;color:var(--muted)">numbered \u25cf = rank</span>';
+}
+function renderMap(){var host=el('mapHost');if(!host)return;host.innerHTML=buildTxMap();renderMapLegend();}
+function mapTip(evt,id){var p=PROPERTIES.find(function(q){return q._id===id;});if(!p)return;var tip=el('maptip');var wrap=tip.parentElement.getBoundingClientRect();tip.innerHTML='<div class="mt-n">#'+p.rank+' '+esc(p.name)+'</div><div class="mt-d">'+esc(p.city)+' \u00b7 Blend '+p._s.bl.toFixed(1)+' \u00b7 '+p._s.dec+'</div>';tip.style.left=(evt.clientX-wrap.left+12)+'px';tip.style.top=(evt.clientY-wrap.top+12)+'px';tip.style.opacity='1';}
+function hideTip(){var tip=el('maptip');if(tip)tip.style.opacity='0';}
+
+/* ---------- modal ---------- */
+function fbar(v){return '<span class="fbar"><i style="width:'+(v*10)+'%"></i></span>';}
+function labelMap(k,p){
+  if(k==='water')return p.water==='city'?'City water':p.water==='well'?'Private well':p.water;
+  if(k==='sewer')return p.sewer==='city'?'City sewer':p.sewer==='septic'?'Septic':p.sewer==='package_plant'?'Package plant':p.sewer==='lagoon'?'Lagoon':p.sewer;
+  return '';
+}
+
+/* ---------- OM viewer ---------- */
+/* OM files live in the oms/ folder and load by relative path.
+   Works on GitHub Pages (https) and, for the "Open in new tab" button, locally (file://). */
+var OM_FILE={
+  thesis:"investment-thesis.pdf",
+  texasportfolio:"texas-portfolio-rgv.pdf",
+  southtx:"south-texas-mhc-portfolio.pdf",
+  watertower:"water-tower-rv-park.pdf",
+  copper:"copper-ridge-rv-park.pdf",
+  sugarhill:"sugar-hill-rv-resort.pdf",
+  village:"village-rv-park.pdf"
+};
+function omURL(key){ var f=OM_FILE[key]; return f?("oms/"+f):null; }
+function openOM(key){ var u=omURL(key); if(u)window.open(u,'_blank'); }
+function toggleOM(key,btn){ var f=el('omFrame'); if(!f)return;
+  if(f.getAttribute('data-open')===key){ f.innerHTML=''; f.removeAttribute('data-open'); if(btn)btn.classList.remove('active'); return; }
+  var u=omURL(key); if(!u){ f.innerHTML='<p style="color:var(--muted);padding:12px 2px">OM file not embedded for this deal.</p>'; return; }
+  f.innerHTML='<iframe src="'+u+'#view=FitH" title="Offering Memorandum" style="width:100%;height:72vh;border:1px solid var(--line);border-radius:8px;background:#111"></iframe>';
+  f.setAttribute('data-open',key); if(btn)btn.classList.add('active'); }
+
+function openDetail(id){
+  var p=PROPERTIES.find(function(q){return q._id===id;}); if(!p)return; var s=p._s;
+  el('mTitle').textContent=p.name;
+  el('mAddr').textContent=p.city+', '+p.state+' \u00b7 '+p.metro+' \u00b7 '+((p.pads||0)+(p.rv||0))+(p.archetype==='rv'?' RV sites':' pads');
+  var asRows=AS_FACTORS.map(function(f){return '<div class="frow"><span class="fn">'+f[1]+'</span><span class="fv">'+s.sub[f[0]].toFixed(1)+fbar(s.sub[f[0]])+'</span></div>';}).join('');
+  var opRows=OP_FACTORS.map(function(f){return '<div class="frow"><span class="fn">'+f[1]+'</span><span class="fv">'+s.sub[f[0]].toFixed(1)+fbar(s.sub[f[0]])+'</span></div>';}).join('');
+  var gate=s.gates.length?'<div class="gate-warn"><strong>\u2298 Gated:</strong> '+s.gates.map(esc).join(' \u00b7 ')+'</div>':'';
+  var stew=(s.steward.note)?'<div class="steward-warn"><strong>Stewardship &amp; Regulatory ('+s.steward.risk+'):</strong> '+esc(s.steward.note)+'</div>':'';
+  var tf=s.thesis;
+  var tfit='<div class="steward-warn" style="border-left-color:'+tf.col+'"><strong style="color:'+tf.col+'">Thesis Fit \u2014 '+tf.fit+':</strong> '
+    +(tf.flags.length? '<ul style="margin:6px 0 0;padding-left:16px">'+tf.flags.map(function(x){return '<li style="margin:2px 0">'+esc(x)+'</li>';}).join('')+'</ul>' : 'Within the Chandler MHC/RV target acquisition profile on scale, occupancy, home-mix and DSCR.')
+    +'</div>';
+  var omBar = p.om ? "<div class='om-bar'>"+"<button class='om-btn' onclick=\"toggleOM('"+p.om+"',this)\">\u25a4 View Full OM</button>"+"<button class='om-btn ghost' onclick=\"openOM('"+p.om+"')\">Open in new tab \u2197</button>"+"<span class='om-src'>Source document \u00b7 Marcus &amp; Millichap OM (as provided)</span>"+"</div><div class='om-frame' id='omFrame'></div>" : "<div class='om-frame' id='omFrame'></div>";
+  var body=''
+    +'<div class="dec-banner" style="border-color:'+s.dcol+';background:'+s.dcol+'18;color:'+s.dcol+'">'+s.dec+' \u00b7 '+tierShort(s.tier)+'</div>'
+    +gate+stew+tfit+omBar
+    +'<div class="mi-score">'
+    +'<div class="msc"><div class="n" style="color:var(--emerald)">'+s.as.toFixed(1)+'</div><div class="l">Asset</div></div>'
+    +'<div class="msc"><div class="n" style="color:var(--gold)">'+s.op.toFixed(1)+'</div><div class="l">Operations</div></div>'
+    +'<div class="msc"><div class="n" style="color:var(--cream)">'+s.bl.toFixed(1)+'</div><div class="l">Blended</div></div>'
+    +'</div>'
+    +'<div class="anchor-note">'+esc(p.notes||'')+'</div>'
+    +'<div class="mi-grid">'
+    +'<div class="mi"><div class="k">Asking Price</div><div class="v">'+(p.unpriced?'Call for offers':fmtMoney(p.sale_price))+'</div></div>'+(p.gross?'<div class="mi"><div class="k">Gross Income</div><div class="v">'+fmtMoney(p.gross)+'</div></div>':'')+((p.unpriced&&p.noi)?'<div class="mi"><div class="k">Stated NOI</div><div class="v">'+fmtMoney(p.noi)+'</div></div>':'')
+    +'<div class="mi"><div class="k">Ask Cap / Day-1</div><div class="v">'+(p.cap_rate!=null?p.cap_rate.toFixed(2)+'%':'\u2014')+(p.day1_cap!=null?' / '+p.day1_cap.toFixed(2)+'%':'')+'</div></div>'
+    +'<div class="mi"><div class="k">Recommended Cap Band</div><div class="v" style="color:var(--gold)">'+s.capLow.toFixed(2)+'\u2013'+s.capHigh.toFixed(2)+'%</div></div>'
+    +'<div class="mi"><div class="k">Fair Value (@'+s.capMid.toFixed(2)+'%)</div><div class="v">'+(s.fvMid?fmtMoney(s.fvMid):'\u2014')+(s.variance!=null?' <span style="font-size:11px;color:'+(s.variance<=0?'#7DAB7B':'#B86850')+'">('+(s.variance>=0?'+':'')+s.variance.toFixed(1)+'%)</span>':'')+'</div></div>'
+    +'<div class="mi"><div class="k">Water / Sewer</div><div class="v">'+labelMap('water',p)+' / '+labelMap('sewer',p)+'</div></div>'
+    +'<div class="mi"><div class="k">Metering / Bill-Back</div><div class="v" style="text-transform:capitalize">'+esc(p.meter)+' / '+esc((p.billback||'').replace('_',' '))+'</div></div>'
+    +(p.archetype==='rv'?'':'<div class="mi"><div class="k">Home Mix (TOH/POH)</div><div class="v">'+(100-p.poh_pct)+'% / '+p.poh_pct+'%</div></div>')
+    +'<div class="mi"><div class="k">Occupancy</div><div class="v">'+(p.occ!=null?p.occ+'% ':'\u2014')+'<span style="font-size:11px;color:var(--muted)">'+esc(p.occ_trend||'')+'</span></div></div>'
+    +(p.archetype==='rv'?'':'<div class="mi"><div class="k">Lot Rent / Market</div><div class="v">$'+p.lot_rent+' / $'+p.market_rent+'</div></div>')
+    +'<div class="mi"><div class="k">Expense Ratio</div><div class="v">'+(p.expense_ratio!=null?p.expense_ratio+'%':'\u2014')+'</div></div>'
+    +'<div class="mi"><div class="k">Metro Distance</div><div class="v">'+(p.metro_min!=null?p.metro_min+' min':'\u2014')+'</div></div>'
+    +'<div class="mi"><div class="k">Agency Financeable</div><div class="v">'+(p.agency?'Yes (Fannie/Freddie)':'No')+'</div></div>'+(p.dscr!=null?'<div class="mi"><div class="k">DSCR (broker going-in)</div><div class="v">'+p.dscr.toFixed(2)+'x <span style="font-size:11px;color:'+((p.dscr>=(p.archetype==='rv'?1.40:1.35))?'#7DAB7B':'#B86850')+'">(floor '+(p.archetype==='rv'?'1.40':'1.35')+'x)</span></div></div>':'')+(p.rv_recurring?'<div class="mi"><div class="k">Recurring Revenue</div><div class="v" style="font-size:12px">'+esc(p.rv_recurring)+'</div></div>':'')+(p.demand&&p.demand.length?'<div class="mi" style="grid-column:1/-1"><div class="k">Demand Drivers ('+p.demand.length+')</div><div class="v" style="font-size:12px">'+p.demand.map(esc).join(' \u00b7 ')+'</div></div>':'')
+    +'</div>'
+    +'<div class="factor-sec"><h4>Asset Sub-Scores (60% weight)</h4>'+asRows+'</div>'
+    +'<div class="factor-sec"><h4>Operations Sub-Scores (40% weight)</h4>'+opRows+'</div>';
+  el('mBody').innerHTML=body;
+  el('overlay').classList.add('open');document.body.style.overflow='hidden';
+}
+function closeMO(){el('overlay').classList.remove('open');document.body.style.overflow='';}
+
+/* ---------- thesis controls ---------- */
+function buildPresets(){el('presets').innerHTML=Object.keys(PRESETS).map(function(nm,i){return '<button class="preset-btn'+(i===0?' active':'')+'" data-preset="'+nm+'" onclick="applyPreset(\''+nm+'\')">'+nm+'</button>';}).join('');}
+function buildSliders(){
+  el('asSliders').innerHTML=AS_FACTORS.map(function(f){return '<div class="slider-row"><label>'+f[1]+'</label><input type="range" min="0" max="40" value="'+THESIS.as[f[0]]+'" oninput="onWeight(\'as\',\''+f[0]+'\',this.value)"><span class="val" id="w_as_'+f[0]+'">'+THESIS.as[f[0]]+'%</span></div>';}).join('');
+  el('opSliders').innerHTML=OP_FACTORS.map(function(f){return '<div class="slider-row"><label>'+f[1]+'</label><input type="range" min="0" max="40" value="'+THESIS.op[f[0]]+'" oninput="onWeight(\'op\',\''+f[0]+'\',this.value)"><span class="val" id="w_op_'+f[0]+'">'+THESIS.op[f[0]]+'%</span></div>';}).join('');
+  updateSums();
+}
+function updateSums(){el('asSum').textContent=Object.values(THESIS.as).reduce(function(a,b){return a+b;},0)+'% (norm.)';el('opSum').textContent=Object.values(THESIS.op).reduce(function(a,b){return a+b;},0)+'% (norm.)';}
+function onWeight(g,k,v){THESIS[g][k]=+v;el('w_'+g+'_'+k).textContent=v+'%';updateSums();clearPreset();scheduleRender();}
+function onBlend(v){THESIS.blendAS=+v;el('blAS').textContent=v;el('blOP').textContent=100-v;clearPreset();scheduleRender();}
+function applyPreset(nm){THESIS=JSON.parse(JSON.stringify(PRESETS[nm]));document.querySelectorAll('#presets button').forEach(function(b){b.classList.toggle('active',b.dataset.preset===nm);});el('blendSlider').value=THESIS.blendAS;el('blAS').textContent=THESIS.blendAS;el('blOP').textContent=100-THESIS.blendAS;buildSliders();render();}
+function clearPreset(){document.querySelectorAll('#presets button').forEach(function(b){b.classList.remove('active');});}
+function resetThesis(){applyPreset('Thesis Default');}
+
+
+/* ---------- allocation tracker (70/30 mandate) ---------- */
+function renderAlloc(){
+  var host=el('allocTrack'); if(!host)return;
+  var mhc=0,rv=0,unp=0;
+  PROPERTIES.forEach(function(p){var v=p.sale_price||0;
+    if(p.unpriced||!v){unp++;return;}
+    if(p.archetype==='rv')rv+=v; else mhc+=v;});
+  var tot=mhc+rv||1, mp=mhc/tot*100, rp=rv/tot*100;
+  host.innerHTML=
+    '<div style="display:flex;height:26px;border-radius:5px;overflow:hidden;border:1px solid var(--line)">'
+    +'<div style="width:'+mp.toFixed(1)+'%;background:var(--emerald)"></div>'
+    +'<div style="width:'+rp.toFixed(1)+'%;background:var(--gold)"></div></div>'
+    +'<div style="position:relative;height:15px;margin-top:2px">'
+      +'<div style="position:absolute;left:70%;top:0;height:11px;border-left:2px dashed var(--cream-soft)"></div>'
+      +'<div style="position:absolute;left:70%;top:1px;transform:translateX(-50%);font-size:9px;color:var(--cream-soft);white-space:nowrap">70/30</div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:12.5px;margin-top:6px">'
+      +'<span style="color:var(--emerald)">MHC '+mp.toFixed(0)+'% \u00b7 '+fmtMoney(mhc)+'</span>'
+      +'<span style="color:var(--gold)">RV '+rp.toFixed(0)+'% \u00b7 '+fmtMoney(rv)+'</span></div>'
+    +'<div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">By committed equity across priced deals ('+fmtMoney(tot)+').'
+      +(unp?' '+unp+' unpriced deal'+(unp>1?'s':'')+' (call-for-offers) excluded until financials arrive.':'')
+      +'<br>'+(mp>=70?'On / above the 70% MHC core target.':'MHC sits '+(70-mp).toFixed(0)+' pts under the 70% core \u2014 lean MHC on the next acquisition.')+'</div>';
+}
+
+/* ---------- render ---------- */
+function render(){scoreAndRank();renderHero();renderTable();renderMap();renderPriority();renderTrackPicks();renderPlan();renderAlloc();}
+buildPresets();buildSliders();render();
+</script>
+</body>
+</html>
